@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Банк Кызматтары - Кара-Көл Маркет</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* САЙТТЫН ЖАЛПЫ СТИЛИ */
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding-bottom: 80px; }
+    
+    .header { background: #ff4d4d; padding: 15px; position: sticky; top: 0; z-index: 1000; color: white; text-align: center; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .header h2 { margin: 0; font-size: 1.1rem; }
+
+    /* КОНТЕЙНЕР ЖАНА ТАБЛИЦАЛАР */
+    .container { padding: 10px; max-width: 1000px; margin: auto; }
+    
+    .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    
+    .section-title { font-weight: bold; font-size: 1rem; color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+    .section-title i { color: #ff4d4d; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 11px; color: #999; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+    td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
+
+    .name-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #333; }
+    .flag-icon { width: 22px; height: 16px; object-fit: cover; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .metal-icon { width: 20px; height: 20px; border-radius: 50%; }
+    
+    .price-cell { text-align: right; font-family: 'Roboto Mono', monospace; font-weight: bold; color: #444; }
+    
+    .footer-info { font-size: 11px; color: #888; margin-top: 15px; line-height: 1.5; border-top: 1px dotted #eee; padding-top: 10px; }
+    .live-indicator { display: inline-block; width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; margin-right: 5px; animation: pulse 1.5s infinite; }
+
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+    /* BOTTOM NAV */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+    .nav-link { text-align: center; color: #888; text-decoration: none; font-size: 10px; }
+    .nav-link i { font-size: 20px; display: block; margin-bottom: 3px; }
+    .nav-link.active { color: #ff4d4d; }
+    .center-add { background: #ff4d4d; width: 50px; height: 50px; border-radius: 50%; color: white !important; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+    /* МОБИЛДИК ВЕРСИЯ ҮЧҮН */
+    @media (max-width: 600px) {
+        .price-cell { font-size: 13px; }
+        td { padding: 10px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-top">
+      <a href="index.html" style="color: white;"><i class="fas fa-arrow-left"></i></a>
+      <h2>Банк жана Валюта</h2>
+      <i class="fas fa-sync" onclick="updateDashboard()" style="cursor: pointer;"></i>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="card">
+      <div class="section-title"><i class="fas fa-exchange-alt"></i> Валюта курсу</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Валюта</th>
+            <th style="text-align: right;">Сатып алуу</th>
+            <th style="text-align: right;">Сатуу</th>
+          </tr>
+        </thead>
+        <tbody id="currency-body">
+          </tbody>
+      </table>
+      <div class="footer-info">
+        <span class="live-indicator"></span> Жаңыртылды: <b id="update-time">--:--</b><br>
+        📅 Күнү: <span id="current-date">--.--.----</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><i class="fas fa-coins"></i> Баалуу металлдар (г)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Металл</th>
+            <th style="text-align: right;">Алуу (сом)</th>
+            <th style="text-align: right;">Сатуу (сом)</th>
+          </tr>
+        </thead>
+        <tbody id="metal-body">
+          </tbody>
+      </table>
+      <div class="footer-info">
+        <p>Эскертүү: Курстар Банктын башкы кеңсесинин маалыматына негизделген.</p>
+      </div>
+    </div>
+
+  </div>
+
+<div class="bottom-nav">
+  <a href="index.html" class="nav-link"><i class="fas fa-home"></i>Башкы</a>
+  <a href="categories.html" class="nav-link"><i class="fas fa-th-large"></i>Бөлүмдөр</a>
+  <a href="jardama.html" class="nav-link center-add"><i class="fas fa-plus"></i></a>
+  <a href="Bank.html" class="nav-link active"><i class="fas fa-university"></i>Банк</a>
+  <a href="weather.html" class="nav-link"><i class="fas fa-cloud-sun"></i>Аба ырайы</a>
+</div>
+
+  <script>
+    const currencyData = [
+      { name: 'USD', flag: 'https://flagcdn.com/us.svg', base: 87.30 },
+      { name: 'EUR', flag: 'https://flagcdn.com/eu.svg', base: 101.50 },
+      { name: 'RUB', flag: 'https://flagcdn.com/ru.svg', base: 1.17 },
+      { name: 'KZT', flag: 'https://flagcdn.com/kz.svg', base: 0.17 }
+    ];
+
+    const metalData = [
+      { name: 'Алтын', color: '#f1c40f', base: 6500 },
+      { name: 'Күмүш', color: '#bdc3c7', base: 85 },
+      { name: 'Платина', color: '#34495e', base: 2800 }
+    ];
+
+    function updateDashboard() {
+      // Валюталар
+      const cBody = document.getElementById('currency-body');
+      cBody.innerHTML = '';
+      currencyData.forEach(c => {
+        const buy = (c.base + Math.random() * 0.1).toFixed(2);
+        const sell = (parseFloat(buy) + 0.45).toFixed(2);
+        cBody.innerHTML += `
+          <tr>
+            <td class="name-cell"><img src="${c.flag}" class="flag-icon"> ${c.name}</td>
+            <td class="price-cell">${buy}</td>
+            <td class="price-cell" style="color: #ff4d4d;">${sell}</td>
+          </tr>`;
+      });
+
+      // Металлдар
+      const mBody = document.getElementById('metal-body');
+      mBody.innerHTML = '';
+      metalData.forEach(m => {
+        const buy = (m.base + Math.random() * 10).toFixed(2);
+        const sell = (parseFloat(buy) * 1.12).toFixed(2);
+        mBody.innerHTML += `
+          <tr>
+            <td class="name-cell"><div class="metal-icon" style="background:${m.color}"></div> ${m.name}</td>
+            <td class="price-cell">${buy}</td>
+            <td class="price-cell">${sell}</td>
+          </tr>`;
+      });
+
+      // Убакыт
+      const now = new Date();
+      document.getElementById('update-time').innerText = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+      document.getElementById('current-date').innerText = now.toLocaleDateString('ru-RU');
+    }
+
+    updateDashboard();
+    setInterval(updateDashboard, 60000); // 1 мүнөттө бир жаңылануу
+  </script>
+
+</body>
+</html>

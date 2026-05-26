@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ Панель - Кара-Көл Market</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f4f4f4; padding-bottom: 40px; }
+    
+    /* ЖОГОРКУ ШАПКА */
+    .header { background: #ff4d4d; color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    .container { padding: 15px; max-width: 1400px; margin: auto; display: none; }
+    
+    /* ЛОГИН ТЕРЕЗЕСИ */
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f4f4; z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+    .login-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 360px; text-align: center; }
+    .login-box h2 { margin-top: 0; color: #333; font-size: 1.4rem; margin-bottom: 20px; }
+    
+    .password-wrapper { position: relative; margin-bottom: 15px; width: 100%; }
+    .password-wrapper input { width: 100%; padding: 12px 45px 12px 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; }
+    .password-wrapper input:focus { border-color: #ff4d4d; }
+    .password-wrapper input.error { border-color: #e74c3c; background-color: #fdf2f2; }
+    
+    .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; font-size: 18px; }
+    .login-box button { width: 100%; padding: 12px; background: #ff4d4d; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .error-msg { color: #e74c3c; font-size: 14px; margin-bottom: 12px; display: none; font-weight: 500; }
+
+    /* ТАБТАР ЖАНА СУММАЛАР */
+    .counter { background: white; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
+    .btn-logout { background: white; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; color: #64748b; font-size: 13px; font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+    .btn-logout:hover { background: #f1f5f9; color: #334155; }
+
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 12px; border: none; background: #cbd5e1; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; color: #333; }
+    .tab-btn.active { background: #ff4d4d; color: white; }
+
+    /* СЕТКА (КОМПЬЮТЕРДЕ 4 ДААНА) */
+    #ads-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .ad-card { 
+      background: white; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04); 
+      display: flex; 
+      flex-direction: column; 
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    /* ЖАНЫ КӨП СҮРӨТТҮҮ СЛАЙДЕР СТИЛИ */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .slider-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease-in-out;
+    }
+    .slider-slide {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .slider-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Сүрөттүн санын көрсөткүч (мисалы: 1/3) */
+    .slider-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.65);
+      color: white;
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    /* Оңго/солго басуучу жебелер */
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      z-index: 10;
+      transition: 0.2s;
+    }
+    .slider-btn:hover { background: rgba(0, 0, 0, 0.7); }
+    .slider-btn.prev { left: 8px; }
+    .slider-btn.next { right: 8px; }
+    
+    .ad-title { 
+      font-size: 1rem; 
+      font-weight: bold; 
+      margin: 0 0 6px 0; 
+      color: #1e293b; 
+      word-break: break-word;
+      height: 38px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    
+    .ad-price { color: #ff4d4d; font-weight: 700; font-size: 1.15rem; margin: 4px 0 10px 0; }
+    
+    .ad-meta { font-size: 0.85rem; color: #475569; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 6px; }
+    .ad-meta a { color: #2563eb; text-decoration: none; font-weight: bold; }
+    
+    /* БАСКЫЧТАР */
+    .actions { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+    .btn { width: 100%; padding: 9px; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: white; transition: opacity 0.2s; box-sizing: border-box; }
+    .btn:hover { opacity: 0.9; }
+    
+    .btn-approve { background: #2ecc71; }
+    .btn-delete { background: #e74c3c; }
+    
+    .empty-msg { grid-column: span 4; text-align: center; color: #64748b; margin-top: 50px; font-size: 1.1rem; }
+    .loading { text-align: center; color: #ff4d4d; font-weight: bold; margin-top: 30px; font-size: 1.1rem; }
+
+    /* МОБИЛДИК ТҮЗҮМДӨРГӨ ЫҢГАЙЛАШТЫРУУ */
+    @media (max-width: 1024px) {
+      #ads-container { grid-template-columns: repeat(3, 1fr); }
+      .empty-msg { grid-column: span 3; }
+    }
+    
+    /* ТЕЛЕФОНДОРДО БИР КАТАРДА ТҮЗ 2 ДААНА БАТАТ */
+    @media (max-width: 768px) {
+      .container { padding: 8px; }
+      #ads-container { 
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .empty-msg { grid-column: span 2; }
+      
+      .ad-card { padding: 8px; border-radius: 8px; }
+      .slider-container { height: 130px; margin-bottom: 6px; }
+      
+      .ad-title { font-size: 0.85rem; height: 32px; -webkit-line-clamp: 2; margin-bottom: 4px; }
+      .ad-price { font-size: 0.95rem; margin: 2px 0 6px 0; }
+      
+      .ad-meta { font-size: 0.75rem; padding: 6px; gap: 4px; margin-bottom: 8px; border-radius: 4px; }
+      .ad-meta i { width: 11px !important; font-size: 11px; }
+      
+      .btn { padding: 8px 4px; font-size: 11px; border-radius: 4px; gap: 4px; }
+      .slider-btn { width: 22px; height: 22px; font-size: 10px; }
+      .slider-badge { font-size: 10px; padding: 2px 6px; bottom: 5px; right: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2><i class="fas fa-user-shield" style="color: #ff4d4d;"></i> Админ Кирүү</h2>
+      <div class="error-msg" id="errorMsg">Пароль ката! Кайра аракет кылыңыз.</div>
+      
+      <div class="password-wrapper">
+        <input type="password" id="passwordInput" placeholder="Админ паролду жазыңыз" autofocus>
+        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+      </div>
+
+      <button id="loginBtn">Кирүү</button>
+    </div>
+  </div>
+
+  <div class="header">
+    <i class="fas fa-user-shield"></i> Башкаруу Панели (Админ)
+  </div>
+
+  <div class="container" id="adminContainer">
+    <div class="counter">
+      <span id="counterText">Жарнамалар жүктөлүүдө...</span>
+      <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Чыгуу</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tabPending">Күтүүдөгүлөр</button>
+      <button class="tab-btn" id="tabActive">Сайттагылар</button>
+    </div>
+
+    <div id="loading" class="loading"><i class="fas fa-spinner fa-spin"></i> Жүктөлүүдө...</div>
+    <div id="ads-container"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCE6B0d8QJlHmo7cCDunwR20aC4eM6NvEA",
+      authDomain: "kara-kul.firebaseapp.com",
+      projectId: "kara-kul",
+      storageBucket: "kara-kul.firebasestorage.app",
+      messagingSenderId: "979298457663",
+      appId: "1:979298457663:web:a104fb281432b950fc808a",
+      measurementId: "G-N6NSJ5Q0J9"
+    };
+
+    const ADMIN_PASSWORD = "snr_muu"; 
+
+    const categoryTranslations = {
+      "phone": "Телефондор", "tools": "Аспаптар", "auto": "Автоунаа", "house": "Кыймылсыз мүлк",
+      "construction": "Курулуш", "job": "Жумуш", "food": "Тамак-аш", "tech": "Техника",
+      "farm": "Дыйкан-чарба", "livestock": "Мал чарба", "sport": "Спорт", "game": "Киберспорт",
+      "taxi": "Такси", "fuel": "Отун, көмүр", "kitchen": "Кофе, Ашкана", "beauty": "Сулуулук",
+      "charity": "Кайрымдуулук", "clothes": "Кийим-кече", "services": "Кызматтар", "news": "Кабарлар"
+    };
+
+    const loginOverlay = document.getElementById('loginOverlay');
+    const adminContainer = document.getElementById('adminContainer');
+    const passwordInput = document.getElementById('passwordInput');
+    const togglePassword = document.getElementById('togglePassword');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    const tabPending = document.getElementById('tabPending');
+    const tabActive = document.getElementById('tabActive');
+    const adsContainer = document.getElementById('ads-container');
+    const loadingEl = document.getElementById('loading');
+    const counterText = document.getElementById('counterText');
+
+    let currentTab = "pending"; 
+    let adsCache = {};
+    let unsubscribe = null;
+
+    togglePassword.onclick = () => {
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    };
+
+    if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+      loginOverlay.style.display = 'none';
+      adminContainer.style.display = 'block';
+      initAdminPanel();
+    }
+
+    loginBtn.onclick = () => { checkPassword(); };
+    passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
+
+    function checkPassword() {
+      if (passwordInput.value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        loginOverlay.style.display = 'none';
+        adminContainer.style.display = 'block';
+        initAdminPanel();
+      } else {
+        errorMsg.style.display = 'block';
+        passwordInput.classList.add('error');
+      }
+    }
+
+    logoutBtn.onclick = () => {
+      sessionStorage.removeItem('isAdminLoggedIn');
+      window.location.reload();
+    };
+
+    function initAdminPanel() {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      tabPending.onclick = () => {
+        if (currentTab === "pending") return;
+        currentTab = "pending";
+        tabPending.classList.add('active');
+        tabActive.classList.remove('active');
+        loadData(db);
+      };
+
+      tabActive.onclick = () => {
+        if (currentTab === "active") return;
+        currentTab = "active";
+        tabActive.classList.add('active');
+        tabPending.classList.remove('active');
+        loadData(db);
+      };
+
+      loadData(db);
+    }
+
+    function loadData(db) {
+      loadingEl.style.display = "block";
+      adsContainer.innerHTML = "";
+      adsCache = {};
+
+      if (unsubscribe) unsubscribe();
+
+      const targetCollection = currentTab === "pending" ? "pending_ads" : "ads";
+      const q = query(collection(db, targetCollection), orderBy("createdAt", "desc"));
+
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        adsContainer.innerHTML = "";
+        loadingEl.style.display = "none";
+        adsCache = {};
+        
+        let count = snapshot.size;
+        counterText.innerText = currentTab === "pending" ? `Модерация: ${count}` : `Сайтта жалпы: ${count}`;
+
+        if (count === 0) {
+          adsContainer.innerHTML = `<p class="empty-msg">Бул бөлүмдө жарнама жок. 😊</p>`;
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          const ad = docSnap.data();
+          const adId = docSnap.id;
+          adsCache[adId] = ad;
+
+          // Сүрөттөрдүн тизмесин аныктоо (массив же жалгыз сүрөт)
+          let imgList = [];
+          if (ad.images && Array.isArray(ad.images) && ad.images.length > 0) {
+            imgList = ad.images;
+          } else if (ad.image) {
+            imgList = [ad.image];
+          }
+
+          // Слайдердин HTML кодун түзүү
+          let sliderHtml = "";
+          if (imgList.length === 0) {
+            sliderHtml = `<div class="slider-container" style="color:#94a3b8; display:flex; justify-content:center; align-items:center;"><i class="fas fa-image fa-2x"></i></div>`;
+          } else {
+            let slides = imgList.map(imgUrl => `<div class="slider-slide"><img src="${imgUrl}" alt="Жарнама сүрөтү"></div>`).join('');
+            let controls = imgList.length > 1 
+              ? `<button class="slider-btn prev" onclick="moveSlider('${adId}', -1)"><i class="fas fa-chevron-left"></i></button>
+                 <button class="slider-btn next" onclick="moveSlider('${adId}', 1)"><i class="fas fa-chevron-right"></i></button>
+                 <div class="slider-badge" id="badge-${adId}">1/${imgList.length}</div>`
+              : "";
+            
+            sliderHtml = `
+              <div class="slider-container" id="slider-${adId}" data-current="0" data-total="${imgList.length}">
+                <div class="slider-track" id="track-${adId}">${slides}</div>
+                ${controls}
+              </div>
+            `;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'ad-card';
+
+          const rawCategory = ad.category || 'none';
+          const kyrgyzCategory = categoryTranslations[rawCategory] || rawCategory;
+
+          const actionButtons = currentTab === "pending" 
+            ? `<button class="btn btn-approve" data-id="${adId}"><i class="fas fa-check"></i> Чыгаруу</button>
+               <button class="btn btn-delete" data-id="${adId}"><i class="fas fa-trash"></i> Өчүрүү</button>`
+            : `<button class="btn btn-delete" data-id="${adId}"><i class="fas fa-trash"></i> Өчүрүү</button>`;
+
+          card.innerHTML = `
+            ${sliderHtml}
+            <h3 class="ad-title">${ad.title || 'Сүрөттөмөсү жок'}</h3>
+            <div class="ad-price">${ad.price} ${ad.currency || 'Сом'}</div>
+            <div class="ad-meta">
+              <span><i class="fas fa-folder" style="color:#64748b; width:14px;"></i> Бөлүм: <b>${kyrgyzCategory}</b></span>
+              <span><i class="fas fa-phone" style="color:#64748b; width:14px;"></i> Тел: <a href="tel:${ad.phone}">${ad.phone}</a></span>
+            </div>
+            <div class="actions">${actionButtons}</div>
+          `;
+          adsContainer.appendChild(card);
+          
+          // Телефондор үчүн серпүү (touch) функциясын кошуу
+          if (imgList.length > 1) {
+            setupTouchSlider(adId);
+          }
+        });
+
+        setupActionEvents(db);
+      });
+    }
+
+    // СЛАЙДЕРДИ СҮРҮҮ ФУНКЦИЯСЫ
+    window.moveSlider = function(adId, direction) {
+      const slider = document.getElementById(`slider-${adId}`);
+      const track = document.getElementById(`track-${adId}`);
+      const badge = document.getElementById(`badge-${adId}`);
+      if (!slider || !track) return;
+
+      let current = parseInt(slider.getAttribute('data-current'));
+      let total = parseInt(slider.getAttribute('data-total'));
+
+      current += direction;
+
+      if (current >= total) current = 0;
+      if (current < 0) current = total - 1;
+
+      slider.setAttribute('data-current', current);
+      track.style.transform = `translateX(-${current * 100}%)`;
+      if (badge) badge.innerText = `${current + 1}/${total}`;
+    }
+
+    // ТЕЛЕФОНДО БАРМАК МЕНЕН СҮРҮҮ (TOUCH SWIPE)
+    function setupTouchSlider(adId) {
+      setTimeout(() => {
+        const slider = document.getElementById(`slider-${adId}`);
+        if (!slider) return;
+        let startX = 0;
+        let endX = 0;
+
+        slider.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        }, {passive: true});
+
+        slider.addEventListener('touchend', (e) => {
+          endX = e.changedTouches[0].clientX;
+          let diff = startX - endX;
+          if (Math.abs(diff) > 40) { // Эгер сүрүү аралыгы жетиштүү болсо
+            if (diff > 0) {
+              moveSlider(adId, 1); // Оңго сүрүү
+            } else {
+              moveSlider(adId, -1); // Солго сүрүү
+            }
+          }
+        }, {passive: true});
+      }, 100);
+    }
+
+    function setupActionEvents(db) {
+      document.querySelectorAll('.btn-approve').forEach(button => {
+        button.onclick = async (e) => {
+          const id = e.currentTarget.dataset.id;
+          const adData = adsCache[id];
+          if (!adData) return;
+
+          if (confirm("Бул жарнаманы башкы бетке чыгарасызбы?")) {
+            try {
+              button.disabled = true;
+              await addDoc(collection(db, "ads"), {
+                title: adData.title || "",
+                category: adData.category || "none",
+                price: adData.price || "0",
+                currency: adData.currency || "Сом",
+                phone: adData.phone || "",
+                image: adData.image || "",
+                images: adData.images || (adData.image ? [adData.image] : []),
+                createdAt: serverTimestamp(),
+                views: 0
+              });
+              await deleteDoc(doc(db, "pending_ads", id));
+              alert("Ийгиликтүү ишке кирди!");
+            } catch (err) {
+              console.error(err);
+              button.disabled = false;
+            }
+          }
+        };
+      });
+
+      document.querySelectorAll('.btn-delete').forEach(button => {
+        button.onclick = async (e) => {
+          const id = e.currentTarget.dataset.id;
+          const targetCollection = currentTab === "pending" ? "pending_ads" : "ads";
+          
+          if (confirm("Бул жарнаманы базадан өчүрүүнү каалайсызбы?")) {
+            try {
+              button.disabled = true;
+              await deleteDoc(doc(db, targetCollection, id));
+              alert("Жарнама ийгиликтүү өчүрүлдү!");
+            } catch (err) {
+              console.error(err);
+              button.disabled = false;
+            }
+          }
+        };
+      });
+    }
+  </script>
+</body>
+</html>

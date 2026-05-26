@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Жарнама берүү</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding-bottom: 20px; }
+    .header { background: #ff4d4d; color: white; padding: 15px; display: flex; align-items: center; }
+    .header a { color: white; text-decoration: none; margin-right: 15px; font-size: 1.2rem; }
+    .container { padding: 15px; }
+    .form-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+    .row { display: flex; gap: 10px; }
+    
+    /* ТЕЛЕФОН НОМЕРДИН КАТА ЖАНА ТУУРА СТИЛДЕРИ */
+    input[type="tel"].invalid-phone { border: 2px solid #e74c3c; background-color: #fdf2f2; }
+    input[type="tel"].valid-phone { border: 2px solid #2ecc71; background-color: #f2fdf5; }
+    .phone-error-msg { color: #e74c3c; font-size: 12px; margin: -4px 0 8px 4px; display: none; font-weight: 500; }
+    
+    /* Сүрөт жүктөөчү сетка */
+    .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+    .upload-box { background: #fafafa; border: 2px dashed #ccc; border-radius: 10px; height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; }
+    .upload-box span { font-size: 9px; color: #888; margin-top: 5px; text-align: center; }
+    .upload-box img { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; display:none; }
+    
+    .submit-btn { background: #ff4d4d; color: white; width: 100%; padding: 15px; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; margin-top: 20px; box-shadow: 0 4px 10px rgba(230,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+    .submit-btn:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="index.html"><i class="fas fa-arrow-left"></i></a>
+    <h2 style="margin:0; font-size: 1.1rem;">Жарнама кошуу</h2>
+  </div>
+
+  <div class="container">
+    <div class="form-card">
+      <textarea id="adText" placeholder="Жарнаманын сүрөттөмөсү..." rows="4"></textarea>
+      
+      <select id="adCat">
+        <option value="none">Категория тандаңыз</option>
+        <option value="auto">Автоунаа</option>
+        <option value="phone">Телефондор</option>
+        <option value="house">Кыймылсыз мүлк</option>
+        <option value="construction">Курулуш материалдар</option>
+        <option value="job">Жумуш</option>
+        <option value="food">Тамак-аш</option>
+        <option value="tech">Техника</option>
+        <option value="farm">Дыйкан-чарба</option>
+        <option value="livestock">Мал чарба</option>
+        <option value="sport">Спорт</option>
+        <option value="game">Киберспорт</option>
+        <option value="taxi">Такси</option>
+        <option value="fuel">Отун, көмүр</option>
+        <option value="kitchen">Кофе, Ашкана</option>
+        <option value="tools">Аспаптар</option>
+        <option value="beauty">Сулуулук</option>
+        <option value="charity">Кайрымдуулук</option>
+      </select>
+
+      <div class="row">
+        <input type="number" id="adPrice" placeholder="Баасы">
+        <select id="adValuta" style="width: 100px;"><option>Сом</option><option>$</option></select>
+      </div>
+      
+      <input type="tel" id="adPhone" placeholder="Телефон номериңиз (мис: 0700123456)">
+      <div id="phoneError" class="phone-error-msg">Номер 9 орундуу же +996 менен 13 орундуу болушу керек!</div>
+      
+      <p style="font-size: 12px; color: #777; margin-top: 15px;">Сүрөттөр (5ке чейин, 1-сүрөт башкы бетте көрүнөт):</p>
+      <div class="upload-grid">
+        <label class="upload-box"><i class="fas fa-camera"></i><span>Башкы</span><input type="file" id="p1" accept="image/*" hidden onchange="prev(this, 1)"><img id="img1"></label>
+        <label class="upload-box"><i class="fas fa-plus"></i><span>Сүрөт 2</span><input type="file" id="p2" accept="image/*" hidden onchange="prev(this, 2)"><img id="img2"></label>
+        <label class="upload-box"><i class="fas fa-plus"></i><span>Сүрөт 3</span><input type="file" id="p3" accept="image/*" hidden onchange="prev(this, 3)"><img id="img3"></label>
+        <label class="upload-box"><i class="fas fa-plus"></i><span>Сүрөт 4</span><input type="file" id="p4" accept="image/*" hidden onchange="prev(this, 4)"><img id="img4"></label>
+        <label class="upload-box"><i class="fas fa-plus"></i><span>Сүрөт 5</span><input type="file" id="p5" accept="image/*" hidden onchange="prev(this, 5)"><img id="img5"></label>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="sendAd()">
+        <i class="fas fa-paper-plane"></i> <span id="btnText">Жарнаманы жайгаштыруу</span>
+      </button>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCE6B0d8QJlHmo7cCDunwR20aC4eM6NvEA",
+    authDomain: "kara-kul.firebaseapp.com",
+    projectId: "kara-kul",
+    storageBucket: "kara-kul.firebasestorage.app",
+    messagingSenderId: "979298457663",
+    appId: "1:979298457663:web:a104fb281432b950fc808a",
+    measurementId: "G-N6NSJ5Q0J9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let base64Images = { p1: "", p2: "", p3: "", p4: "", p5: "" };
+
+  // НОМЕРДИ ТЕКШЕРҮҮ ФУНКЦИЯСЫ (REAL-TIME VALIDATION)
+  const phoneInput = document.getElementById('adPhone');
+  const phoneError = document.getElementById('phoneError');
+  const submitBtn = document.getElementById('submitBtn');
+
+  phoneInput.addEventListener('input', () => {
+    const val = phoneInput.value.trim();
+    
+    // Эгер бош болсо стилдерди баштапкы абалга келтирет
+    if (val === "") {
+      phoneInput.classList.remove('invalid-phone', 'valid-phone');
+      phoneError.style.display = 'none';
+      submitBtn.disabled = false;
+      return;
+    }
+
+    const isNormal9 = /^[0-9]{9}$/.test(val); // Болгону 9 сан
+    const isKyrgyz13 = /^\+996[0-9]{9}$/.test(val); // +996 жана артынан 9 сан (жалпы 13 орун)
+
+    if (isNormal9 || isKyrgyz13) {
+      phoneInput.classList.remove('invalid-phone');
+      phoneInput.classList.add('valid-phone');
+      phoneError.style.display = 'none';
+      submitBtn.disabled = false;
+    } else {
+      phoneInput.classList.remove('valid-phone');
+      phoneInput.classList.add('invalid-phone');
+      phoneError.style.display = 'block';
+      submitBtn.disabled = true; // Номер ката болсо кнопка иштебей калат
+    }
+  });
+
+  window.prev = function(input, n) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        let img = document.getElementById('img' + n);
+        if (img) {
+          img.src = e.target.result;
+          img.style.display = 'block';
+        }
+      }
+      reader.readAsDataURL(file);
+
+      const compressReader = new FileReader();
+      compressReader.readAsDataURL(file);
+      compressReader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const max_size = 600; 
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > max_size) {
+              height *= max_size / width;
+              width = max_size;
+            }
+          } else {
+            if (height > max_size) {
+              width *= max_size / height;
+              height = max_size;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+          base64Images['p' + n] = compressedBase64;
+        };
+      };
+    }
+  }
+
+  window.sendAd = async function() {
+    const adText = document.getElementById('adText').value.trim();
+    const adCat = document.getElementById('adCat').value;
+    const adPrice = document.getElementById('adPrice').value.trim();
+    const adValuta = document.getElementById('adValuta').value;
+    const adPhone = phoneInput.value.trim();
+    const btn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+
+    // Базага жөнөтүү алдында номерин дагы бир сыйра текшерип алуу
+    const isNormal9 = /^[0-9]{9}$/.test(adPhone);
+    const isKyrgyz13 = /^\+996[0-9]{9}$/.test(adPhone);
+
+    if (!isNormal9 && !isKyrgyz13) {
+      alert("Сураныч, телефон номерин туура форматта жазыңыз!");
+      phoneInput.focus();
+      return;
+    }
+
+    const uploadedUrls = [];
+    for(let i = 1; i <= 5; i++) {
+        if (base64Images['p' + i]) {
+            uploadedUrls.push(base64Images['p' + i]);
+        }
+    }
+
+    if (!adText || !adPrice || uploadedUrls.length === 0 || adCat === "none" || !adPhone) {
+      alert("Сураныч, бардык талааларды толтуруңуз жана кеминде 1 сүрөт тандаңыз!");
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.innerText = "Текшерүүгө жөнөтүлүүдө...";
+
+    try {
+      await addDoc(collection(db, "pending_ads"), {
+        title: adText,
+        category: adCat,
+        price: adPrice,
+        currency: adValuta,
+        phone: adPhone,
+        image: uploadedUrls[0], 
+        images: uploadedUrls,    
+        createdAt: serverTimestamp(),
+        views: 0
+      });
+
+      alert("Жарнама модерацияга ийгиликтүү жөнөтүлдү! Админ текшергенден кийин сайтка чыгат.");
+      window.location.href = 'index.html';
+
+    } catch (error) {
+      console.error("Ката кетти: ", error);
+      alert("Ката кетти, кайра аракет кылыңыз: " + error.message);
+      btnText.innerText = "Жарнаманы жайгаштыруу";
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

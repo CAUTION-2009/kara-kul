@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кара-Көл Маркет - Бардык категориялар</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding-bottom: 80px; overflow-x: hidden; }
+    
+    /* Header */
+    .header { background: #ff4d4d; padding: 15px; position: sticky; top: 0; z-index: 1000; color: white; display: flex; align-items: center; justify-content: space-between; }
+    .header h2 { margin: 0; font-size: 1.2rem; }
+
+    /* Sidebar & Overlay */
+    .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 2000; transition: 0.3s; padding: 20px; box-sizing: border-box; }
+    .sidebar.active { left: 0; }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .sidebar-header h2 { color: #ff4d4d; margin: 0; }
+    .sidebar-links a { display: flex; align-items: center; padding: 12px 10px; text-decoration: none; color: #333; font-size: 16px; border-radius: 8px; margin-bottom: 5px; }
+    .sidebar-links a i { margin-right: 15px; width: 20px; color: #ff4d4d; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1500; }
+    .overlay.active { display: block; }
+
+    /* Categories Grid */
+    .container { padding: 15px; }
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      text-align: center;
+      padding: 18px 5px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #f0f0f0;
+    }
+
+    .card:active { transform: scale(0.95); background: #fff5f5; border-color: #ff4d4d; }
+    
+    /* Минималисттик кооз иконка уюасы */
+    .cat-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 10px;
+      background: #fdf2f2; /* Жумшак ачык кызыл фон */
+      color: #ff4d4d;      /* Негизги бренд түсү */
+      transition: 0.2s;
+    }
+    
+    .card:hover .cat-icon-box {
+      background: #ff4d4d;
+      color: white;
+    }
+
+    .card p { font-size: 11px; margin: 0; color: #444; font-weight: 600; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* BOTTOM NAV */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+    .nav-link { text-align: center; color: #888; text-decoration: none; font-size: 10px; }
+    .nav-link i { font-size: 20px; display: block; margin-bottom: 3px; }
+    .nav-link.active { color: #ff4d4d; }
+    .center-add { background: #ff4d4d; width: 50px; height: 50px; border-radius: 50%; color: white !important; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Меню</h2>
+      <i class="fas fa-times" onclick="toggleMenu()"></i>
+    </div>
+    <div class="sidebar-links">
+      <a href="index.html"><i class="fas fa-home"></i> Башкы бет</a>
+      <a href="categories.html"><i class="fas fa-th-large"></i> Категориялар</a>
+      <a href="jardama.html"><i class="fas fa-plus-circle"></i> Жарнама кошуу</a>
+      <a href="#"><i class="fas fa-share-alt"></i> Бөлүшүү</a>
+      <a href="#"><i class="fas fa-comment-dots"></i> Ой пикир</a>
+    </div>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <div class="header">
+    <i class="fas fa-bars" onclick="toggleMenu()" style="font-size: 1.2rem; cursor: pointer;"></i>
+    <h2>Категориялар</h2>
+    <i class="fas fa-search" style="font-size: 1.1rem; cursor: pointer;"></i>
+  </div>
+
+  <div class="categories-grid">
+    <div class="card" onclick openCat('news')">
+        <div class="cat-icon-box"><i class="fas fa-bullhorn"></i></div>
+        <p>Кабарлар</p>
+    </div>
+    <div class="card" onclick="openCat('auto')">
+        <div class="cat-icon-box"><i class="fas fa-car"></i></div>
+        <p>Автоунаа</p>
+    </div>
+    <div class="card" onclick="openCat('house')">
+        <div class="cat-icon-box"><i class="fas fa-home"></i></div>
+        <p>Кыймылсыз мүлк</p>
+    </div>
+    <div class="card" onclick="openCat('phone')">
+        <div class="cat-icon-box"><i class="fas fa-mobile-alt"></i></div>
+        <p>Телефондор</p>
+    </div>
+    <div class="card" onclick="openCat('construction')">
+        <div class="cat-icon-box"><i class="fas fa-tools"></i></div>
+        <p>Курулуш</p>
+    </div>
+    <div class="card" onclick="openCat('job')">
+        <div class="cat-icon-box"><i class="fas fa-briefcase"></i></div>
+        <p>Жумуш</p>
+    </div>
+    <div class="card" onclick="openCat('food')">
+        <div class="cat-icon-box"><i class="fas fa-utensils"></i></div>
+        <p>Тамак-аш</p>
+    </div>
+    <div class="card" onclick="openCat('tech')">
+        <div class="cat-icon-box"><i class="fas fa-laptop"></i></div>
+        <p>Техника</p>
+    </div>
+    <div class="card" onclick="openCat('farm')">
+        <div class="cat-icon-box"><i class="fas fa-seedling"></i></div>
+        <p>Дыйкан-чарба</p>
+    </div>
+<div class="card" onclick="openCat('livestock')">
+    <div class="cat-icon-box"><i class="fas fa-paw"></i></div>
+    <p>Мал чарба</p>
+</div>
+    <div class="card" onclick="openCat('sport')">
+        <div class="cat-icon-box"><i class="fas fa-running"></i></div>
+        <p>Спорт</p>
+    </div>
+    <div class="card" onclick="openCat('game')">
+        <div class="cat-icon-box"><i class="fas fa-gamepad"></i></div>
+        <p>Киберспорт</p>
+    </div>
+    <div class="card" onclick="openCat('taxi')">
+        <div class="cat-icon-box"><i class="fas fa-taxi"></i></div>
+        <p>Такси</p>
+    </div>
+    <div class="card" onclick="openCat('fuel')">
+        <div class="cat-icon-box"><i class="fas fa-fire"></i></div>
+        <p>Отун, көмүр</p>
+    </div>
+    <div class="card" onclick="openCat('kitchen')">
+        <div class="cat-icon-box"><i class="fas fa-coffee"></i></div>
+        <p>Кофе, Ашкана</p>
+    </div>
+    <div class="card" onclick="openCat('tools')">
+        <div class="cat-icon-box"><i class="fas fa-wrench"></i></div>
+        <p>Аспаптар</p>
+    </div>
+    <div class="card" onclick="openCat('beauty')">
+        <div class="cat-icon-box"><i class="fas fa-magic"></i></div>
+        <p>Сулуулук</p>
+    </div>
+    <div class="card" onclick="openCat('charity')">
+        <div class="cat-icon-box"><i class="fas fa-hand-holding-heart"></i></div>
+        <p>Кайрымдуулук</p>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-link"><i class="fas fa-home"></i>Башкы</a>
+    <a href="categories.html" class="nav-link active"><i class="fas fa-th-large"></i>Бөлүмдөр</a>
+    <a href="jardama.html" class="nav-link center-add"><i class="fas fa-plus"></i></a>
+    <a href="Bank.html" class="nav-link"><i class="fas fa-university"></i>Банк</a>
+    <a href="weather.html" class="nav-link"><i class="fas fa-cloud-sun"></i>Аба ырайы</a>
+  </div>
+
+  <script>
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        if (sidebar) sidebar.classList.toggle('active');
+        if (overlay) overlay.classList.toggle('active');
+    }
+
+    function openCat(categoryId) {
+        window.location.href = "index.html?cat=" + categoryId;
+    }
+  </script>
+</body>
+</html>

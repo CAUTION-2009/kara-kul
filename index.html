@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кара-Көл Market - Башкы бет</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding-bottom: 80px; overflow-x: hidden; }
+    
+    /* Header & Search */
+    .header { background: #ff4d4d; padding: 15px; position: sticky; top: 0; z-index: 1000; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .header-top h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+    
+    /* КООЗ АДМИН БАТЫРМАСЫ */
+    .admin-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .admin-btn:hover {
+      background: white;
+      color: #ff4d4d;
+    }
+
+    .search-box { position: relative; width: 100%; box-sizing: border-box; }
+    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; font-size: 16px; }
+    .search-box input { width: 100%; padding: 11px 15px 11px 42px; border-radius: 25px; border: none; outline: none; box-sizing: border-box; font-size: 14px; shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+    /* Sidebar Меню */
+    .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 2000; transition: 0.3s; padding: 20px; box-sizing: border-box; }
+    .sidebar.active { left: 0; }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .sidebar-links a { display: flex; align-items: center; padding: 12px 10px; text-decoration: none; color: #333; border-radius: 8px; font-weight: 500; }
+    .sidebar-links a i { margin-right: 15px; color: #ff4d4d; width: 20px; font-size: 16px; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1500; }
+    .overlay.active { display: block; }
+
+    /* Жарнама ачылганда арткы бетти караңгылатуучу катмар */
+    .ad-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; }
+
+    /* Калкып чыгуучу Мобилдик Терезе (Popup/Modal) */
+    .ad-modal-window {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 450px;
+        height: 85vh;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 3500;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: popupShow 0.3s ease-out;
+    }
+
+    @keyframes popupShow {
+        from { transform: translate(-50%, -40%); opacity: 0; }
+        to { transform: translate(-50%, -50%); opacity: 1; }
+    }
+
+    /* Категориялар (Горизонталдык сыдырма) */
+    .section-title { padding: 15px 15px 5px; font-weight: bold; font-size: 0.95rem; color: #555; }
+    .categories-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 10px 15px;
+      scrollbar-width: none; 
+    }
+    .categories-container::-webkit-scrollbar { display: none; }
+    
+    .cat-item {
+      min-width: 80px;
+      background: white;
+      border-radius: 15px;
+      padding: 12px 5px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: none;
+      cursor: pointer;
+    }
+/* Эски .cat-item img стилинин ордуна же анын астына кошуңуз */
+.cat-item img, .cat-item .cat-icon-wrap { 
+  width: 45px; 
+  height: 45px; 
+  border-radius: 50%; 
+  margin-bottom: 8px; 
+}
+.cat-item .cat-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fdf2f2; /* Жумшак ачык кызыл фон */
+  color: #ff4d4d;      /* Негизги кызыл түс */
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+/* Активдүү болуп тандалгандагы иконканын түсү */
+.cat-item.active .cat-icon-wrap {
+  background: #ff4d4d;
+  color: white;
+}
+
+    /* Жарнамалар тизмеги */
+    .ads-container { 
+        display: grid; 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 8px; 
+        padding: 8px; 
+        background: #f8f9fa;
+    }
+
+    .ad-card { 
+        background: white; 
+        border-radius: 8px; 
+        overflow: hidden; 
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
+
+    .ad-card img { 
+        width: 100%; 
+        height: 120px; 
+        object-fit: cover; 
+    }
+
+    .ad-info { 
+        padding: 8px; 
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+
+    .ad-price { 
+        color: #ff4d4d; 
+        font-weight: 700; 
+        font-size: 14px; 
+        margin-bottom: 3px;
+    }
+
+    .ad-info h4 { 
+        margin: 0; 
+        font-size: 12px; 
+        color: #333; 
+        font-weight: 400;
+        line-height: 1.3;
+        height: 32px; 
+        overflow: hidden; 
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .ad-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+        font-size: 9px; 
+        color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .ads-container {
+            grid-template-columns: repeat(2, 1fr); 
+        }
+        .ad-modal-window {
+            top: auto;
+            bottom: 0;
+            left: 0;
+            transform: none;
+            width: 100%;
+            height: 85vh;
+            border-radius: 20px 20px 0 0;
+            animation: mobileSheetUp 0.3s ease-out;
+        }
+        @keyframes mobileSheetUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    }
+    
+    /* BOTTOM NAV */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+    .nav-link { text-align: center; color: #888; text-decoration: none; font-size: 10px; }
+    .nav-link i { font-size: 20px; display: block; margin-bottom: 3px; }
+    .nav-link.active { color: #ff4d4d; }
+    .center-add { background: #ff4d4d; width: 50px; height: 50px; border-radius: 50%; color: white !important; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar" id="sidebar">
+     <div class="sidebar-header">
+      <h2 style=" margin: 0; font-size: 1.2rem;  color:#ff0000;">Меню</h2>
+      <i class="fas fa-times" onclick="toggleMenu()" style="cursor:pointer; font-size:1.2rem; color:#888;"></i>
+    </div>
+    <div class="sidebar-links">
+      <a href="index.html"><i class="fas fa-home"></i> Башкы бет</a>
+      <a href="categories.html"><i class="fas fa-th-large"></i> Категориялар</a>
+      <a href="jardama.html"><i class="fas fa-plus-circle"></i> Жарнама кошуу</a>
+      <a href="#"><i class="fas fa-share-alt"></i> Бөлүшүү</a>
+      <a href="#"><i class="fas fa-comment-dots"></i> Ой пикир</a>
+    </div>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <div class="ad-overlay" id="adOverlay" onclick="closeAdDetails()"></div>
+  <div class="ad-modal-window" id="adModal"></div>
+
+  <div class="header">
+      <div class="header-top">
+          <i class="fas fa-bars" onclick="toggleMenu()" style="font-size: 1.3rem; cursor: pointer;"></i>
+          <h2>Кара-Көл Маркет</h2>
+          <a href="admin.html" class="admin-btn">
+            <i class="fas fa-user-shield"></i> Админ
+          </a>
+      </div>
+      
+      <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" placeholder="Жарнамаларды издөө...">
+      </div>
+  </div>
+
+<div class="section-title">Категориялар</div>
+<div class="categories-container">
+    <button class="cat-item active" onclick="filterAds('all', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-th-large"></i></div>
+        <span>Баардыгы</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('news', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-bullhorn"></i></div>
+        <span>Кабарлар</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('auto', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-car"></i></div>
+        <span>Автоунаа</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('house', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-home"></i></div>
+        <span>Кыймылсыз мүлк</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('phone', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-mobile-alt"></i></div>
+        <span>Телефондор</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('construction', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-tools"></i></div>
+        <span>Курулуш</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('job', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-briefcase"></i></div>
+        <span>Жумуш</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('food', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-utensils"></i></div>
+        <span>Тамак-аш</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('tech', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-laptop"></i></div>
+        <span>Техника</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('farm', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-seedling"></i></div>
+        <span>Дыйкан-чарба</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('livestock', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-paw"></i></div>
+        <span>Мал чарба</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('sport', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-running"></i></div>
+        <span>Спорт</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('game', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-gamepad"></i></div>
+        <span>Оюн</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('taxi', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-taxi"></i></div>
+        <span>Такси</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('fuel', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-fire"></i></div>
+        <span>Отун, көмүр</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('clothes', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-tshirt"></i></div>
+        <span>Кийим</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('kitchen', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-coffee"></i></div>
+        <span>Ашкана</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('tools', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-wrench"></i></div>
+        <span>Аспаптар</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('beauty', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-magic"></i></div>
+        <span>Сулуулук</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('furniture', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-couch"></i></div>
+        <span>Табылга</span>
+    </button>
+    <button class="cat-item" onclick="filterAds('charity', this)">
+        <div class="cat-icon-wrap"><i class="fas fa-hand-holding-heart"></i></div>
+        <span>Кайрымдуулук</span>
+    </button>
+</div>
+
+  <div class="section-title">Акыркы жарнамалар</div>
+  <div class="ads-container" id="adsList">
+    <p id="noAdsText" style="grid-column: 1/-1; text-align: center; color: #999; padding: 20px;">Жарнамалар жүктөлүүдө...</p>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-link active"><i class="fas fa-home"></i>Башкы</a>
+    <a href="categories.html" class="nav-link"><i class="fas fa-th-large"></i>Бөлүмдөр</a>
+    <a href="jardama.html" class="nav-link center-add"><i class="fas fa-plus"></i></a>
+    <a href="Bank.html" class="nav-link"><i class="fas fa-university"></i>Банк</a>
+    <a href="weather.html" class="nav-link"><i class="fas fa-cloud-sun"></i>Аба ырайы</a>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, updateDoc, doc as fsDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCE6B0d8QJlHmo7cCDunwR20aC4eM6NvEA",
+    authDomain: "kara-kul.firebaseapp.com",
+    projectId: "kara-kul",
+    storageBucket: "kara-kul.firebasestorage.app",
+    messagingSenderId: "979298457663",
+    appId: "1:979298457663:web:a104fb281432b950fc808a",
+    measurementId: "G-N6NSJ5Q0J9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const categoryNames = {
+    'all': 'Баардыгы', 'news': 'Кабарлар', 'auto': 'Автоунаа', 'house': 'Кыймылсыз мүлк',
+    'phone': 'Телефондор', 'construction': 'Курулуш материалдар', 'job': 'Жумуш', 'food': 'Тамак-аш',
+    'tech': 'Техника', 'farm': 'Дыйкан-чарба', 'livestock': 'Мал чарба', 'sport': 'Спорт',
+    'game': 'Киберспорт', 'taxi': 'Такси', 'fuel': 'Отун, көмүр', 'kitchen': 'Кофе, Ашкана',
+    'tools': 'Аспаптар', 'beauty': 'Сулуулук', 'furniture': 'Табылга', 'charity': 'Кайрымдуулук'
+  };
+
+  function formatRelativeDate(timestamp) {
+    if (!timestamp) return "";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const now = new Date();
+    
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const timeStr = `${hours}:${minutes}`;
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    if (compareDate.getTime() === today.getTime()) {
+        return `Бүгүн, ${timeStr}`;
+    }
+    
+    if (compareDate.getTime() === yesterday.getTime()) {
+        return `Кечээ, ${timeStr}`;
+    }
+    
+    const kgMonths = [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", 
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    ];
+    
+    const day = date.getDate();
+    const month = kgMonths[date.getMonth()];
+    
+    return `${day} ${month}, ${timeStr}`;
+  }
+
+  window.toggleMenu = function() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      if (sidebar) sidebar.classList.toggle('active');
+      if (overlay) overlay.classList.toggle('active');
+  }
+
+  window.currentImageIndexes = window.currentImageIndexes || {};
+  window.nextImg = function(adId, imagesJson, event) {
+    if (event) {
+      event.stopPropagation(); 
+      event.preventDefault();
+    }
+    
+    let images = [];
+    try {
+      images = typeof imagesJson === 'string' ? JSON.parse(imagesJson) : imagesJson;
+    } catch(e) {
+      console.error(e);
+      return;
+    }
+
+    if (!images || images.length <= 1) return;
+
+    if (window.currentImageIndexes[adId] === undefined) {
+      window.currentImageIndexes[adId] = 0;
+    }
+
+    window.currentImageIndexes[adId] = (window.currentImageIndexes[adId] + 1) % images.length;
+    const nextIdx = window.currentImageIndexes[adId];
+
+    const imgElement = document.getElementById(`img-${adId}`);
+    const countSpan = document.getElementById(`count-${adId}`);
+
+    if (imgElement) imgElement.src = images[nextIdx];
+    if (countSpan) countSpan.innerText = `${nextIdx + 1}/${images.length}`;
+  };
+
+  window.showAdDetails = function(adId, imagesJson, categoryLabel, price, valuta, text, phone, waLink, views, dateStr) {
+    let images = [];
+    try {
+      images = typeof imagesJson === 'string' ? JSON.parse(imagesJson) : imagesJson;
+    } catch(e) { images = ["https://via.placeholder.com/150"]; }
+
+    window.currentImageIndexes[`detail-${adId}`] = 0;
+
+    const adModal = document.getElementById('adModal');
+    const adOverlay = document.getElementById('adOverlay');
+
+    adModal.innerHTML = `
+        <div style="background: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; font-weight: bold; font-size: 16px; border-bottom: 1px solid #eee;">
+            <span style="color:#333;">Жарнама толук көрүнүшү</span>
+            <i class="fas fa-times" onclick="closeAdDetails()" style="cursor: pointer; padding: 5px; font-size: 22px; color: #888;"></i>
+        </div>
+        
+        <div style="flex: 1; overflow-y: auto; padding-bottom: 80px;">
+            <div style="position: relative; width: 100%; height: 260px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <img id="img-detail-${adId}" src="${images[0]}" style="width: 100%; height: 100%; object-fit: contain;">
+                ${images.length > 1 ? `
+                    <div id="badge-detail-${adId}" onclick="nextImg('detail-${adId}', ${JSON.stringify(images).replace(/"/g, '&quot;')}, event)" 
+                         style="position: absolute; bottom: 15px; right: 15px; background: rgba(0, 0, 0, 0.7); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; z-index: 99; display: flex; align-items: center; justify-content: center; user-select: none;">
+                         <span id="count-detail-${adId}">1/${images.length}</span> <i class="fas fa-chevron-right" style="font-size: 9px; margin-left: 6px;"></i>
+                    </div>
+                ` : ''}
+            </div>
+            <div style="padding: 20px; background: white;">
+                <div style="font-size: 12px; color: #007bff; font-weight: bold; margin-bottom: 5px;">${categoryLabel}</div>
+                <div style="font-size: 24px; color: #ff4d4d; font-weight: bold; margin-bottom: 12px;">${price} ${valuta}</div>
+                <h2 style="font-size: 16px; color: #333; font-weight: normal; line-height: 1.5; margin-bottom: 25px; word-break: break-word;">${text}</h2>
+                <div style="display: flex; gap: 25px; color: #999; font-size: 12px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
+                    <span><i class="far fa-eye"></i> ${views} жолу көрүлдү</span>
+                    <span><i class="far fa-clock"></i> ${dateStr}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #eee; padding: 12px; display: flex; gap: 10px; box-sizing: border-box; z-index: 3600;">
+            <a href="tel:${phone}" style="text-decoration: none; background: #007bff; color: white; flex: 1; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="fas fa-phone-alt"></i> Чалуу
+            </a>
+            <a href="${waLink}" target="_blank" style="text-decoration: none; background: #25D366; color: white; flex: 1; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+        </div>
+    `;
+
+    adModal.style.display = 'flex';
+    adOverlay.style.display = 'block';
+    document.body.style.overflow = 'hidden'; 
+  };
+
+  window.closeAdDetails = function() {
+    document.getElementById('adModal').style.display = 'none';
+    document.getElementById('adOverlay').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  };
+
+  window.filterAds = function(category, element) {
+    window.closeAdDetails();
+
+    const items = document.querySelectorAll('.cat-item');
+    items.forEach(item => item.classList.remove('active'));
+    if (element) element.classList.add('active');
+
+    const ads = document.querySelectorAll('.ad-card');
+    let count = 0;
+
+    ads.forEach(ad => {
+      const adCategory = ad.getAttribute('data-category');
+      if (category === 'all' || adCategory === category) {
+        ad.style.display = 'flex'; 
+        count++;
+      } else {
+        ad.style.display = 'none';
+      }
+    });
+
+    const adsContainer = document.getElementById('adsList');
+    const existingMsg = document.getElementById('emptyMsg');
+    if (existingMsg) existingMsg.remove();
+
+    if (count === 0 && adsContainer) {
+      const msg = document.createElement('p');
+      msg.id = 'emptyMsg';
+      msg.style.cssText = "grid-column: 1/-1; text-align: center; color: #999; padding: 20px;";
+      msg.innerText = "Бул бөлүмдө азырынча жарнама жок";
+      adsContainer.appendChild(msg);
+    }
+  };
+
+  function checkUrlParamAndFilter() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const catParam = urlParams.get('cat'); 
+    if (catParam) {
+        const activeCatButton = document.querySelector(`.cat-item[onclick*="'${catParam}'"]`);
+        window.filterAds(catParam, activeCatButton);
+    }
+  }
+
+  async function getAds() {
+    const adsContainer = document.getElementById('adsList');
+    if (!adsContainer) return;
+    
+    try {
+        const q = query(collection(db, "ads"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        adsContainer.innerHTML = ''; 
+
+        if(querySnapshot.empty) {
+            adsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Азырынча эч кандай жарнама жок.</p>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const ad = doc.data();
+            const adId = doc.id;
+            const categoryID = ad.category || 'all';
+            const categoryLabel = categoryNames[categoryID] || 'Башка';
+            const text = ad.title || ad.adText || "Аталышы жок";
+            const price = ad.price || ad.adPrice || "0";
+            const valuta = ad.currency || ad.adValuta || "сом";
+            const phone = ad.phone || ad.adPhone || "";
+            const views = ad.views || 0;
+            const dateStr = formatRelativeDate(ad.createdAt);
+
+            const allImages = ad.images || (ad.image || ad.img ? [ad.image || ad.img] : ["https://via.placeholder.com/150"]);
+            const waPhone = phone.replace(/\D/g, ''); 
+            const waLink = `https://wa.me/${waPhone}?text=Саламатсызбы!`;
+
+            const adCard = document.createElement('div');
+            adCard.className = "ad-card";
+            adCard.setAttribute('data-category', categoryID);
+            adCard.style.cursor = "pointer";
+
+            adCard.onclick = async function(event) {
+                if (event.target.closest('a') || event.target.closest('[id^="badge-"]')) return;
+                try {
+                    await updateDoc(fsDoc(db, "ads", adId), { views: increment(1) });
+                } catch (e) {}
+                window.showAdDetails(adId, JSON.stringify(allImages), categoryLabel, price, valuta, text, phone, waLink, views + 1, dateStr);
+            };
+
+            adCard.innerHTML = `
+                <div style="position: relative; overflow: hidden; height: 110px; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                    <img id="img-${adId}" src="${allImages[0]}" style="width: 100%; height: 100%; object-fit: contain;">
+                    ${allImages.length > 1 ? `
+                        <div id="badge-${adId}" onclick="nextImg('${adId}', ${JSON.stringify(allImages).replace(/"/g, '&quot;')}, event)" 
+                             style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; z-index: 10; user-select: none;">
+                             <span id="count-${adId}">1/${allImages.length}</span> <i class="fas fa-chevron-right" style="font-size: 7px;"></i>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="ad-info">
+                    <div>
+                        <div class="ad-price">${price} ${valuta}</div>
+                        <h4>${text}</h4>
+                    </div>
+                    <div class="ad-meta">
+                        <span><i class="far fa-eye"></i> ${views}</span>
+                        <span><i class="far fa-clock"></i> ${dateStr}</span>
+                    </div>
+                </div>
+            `;
+            adsContainer.appendChild(adCard);
+        });
+
+        checkUrlParamAndFilter();
+
+    } catch (error) {
+        console.error("Ката кетти: ", error);
+        adsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Маалыматты жүктөөдө ката кетти.</p>';
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        const searchText = e.target.value.toLowerCase();
+        const ads = document.querySelectorAll(".ad-card");
+
+        ads.forEach(ad => {
+          const h4Element = ad.querySelector("h4");
+          const priceElement = ad.querySelector(".ad-price");
+          const adTitle = h4Element ? h4Element.innerText.toLowerCase() : "";
+          const adPrice = priceElement ? priceElement.innerText.toLowerCase() : "";
+          
+          if (adTitle.includes(searchText) || adPrice.includes(searchText)) {
+            ad.style.display = "flex";
+          } else {
+            ad.style.display = "none";
+          }
+        });
+      });
+    }
+  });
+
+  window.onload = getAds;
+</script>
+</body>
+</html>
