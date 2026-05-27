@@ -11,13 +11,14 @@
     /* Header */
     .header { background: #ff4d4d; padding: 15px; position: sticky; top: 0; z-index: 1000; color: white; display: flex; align-items: center; justify-content: space-between; }
     .header h2 { margin: 0; font-size: 1.2rem; }
+    .header-icons { display: flex; gap: 15px; align-items: center; }
 
     /* Sidebar & Overlay */
     .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 2000; transition: 0.3s; padding: 20px; box-sizing: border-box; }
     .sidebar.active { left: 0; }
     .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
     .sidebar-header h2 { color: #ff4d4d; margin: 0; }
-    .sidebar-links a { display: flex; align-items: center; padding: 12px 10px; text-decoration: none; color: #333; font-size: 16px; border-radius: 8px; margin-bottom: 5px; }
+    .sidebar-links a { display: flex; align-items: center; padding: 12px 10px; text-decoration: none; color: #333; font-size: 16px; border-radius: 8px; margin-bottom: 5px; cursor: pointer; }
     .sidebar-links a i { margin-right: 15px; width: 20px; color: #ff4d4d; }
     .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1500; }
     .overlay.active { display: block; }
@@ -48,7 +49,7 @@
 
     .card:active { transform: scale(0.95); background: #fff5f5; border-color: #ff4d4d; }
     
-    /* Минималисттик кооз иконка уюасы */
+    /* Жаңы кооз минималисттик иконка уюасы */
     .cat-icon-box {
       width: 52px;
       height: 52px;
@@ -83,14 +84,14 @@
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h2>Меню</h2>
-      <i class="fas fa-times" onclick="toggleMenu()"></i>
+      <i class="fas fa-times" onclick="toggleMenu()" style="cursor: pointer;"></i>
     </div>
     <div class="sidebar-links">
       <a href="index.html"><i class="fas fa-home"></i> Башкы бет</a>
       <a href="categories.html"><i class="fas fa-th-large"></i> Категориялар</a>
       <a href="jardama.html"><i class="fas fa-plus-circle"></i> Жарнама кошуу</a>
-      <a href="#"><i class="fas fa-share-alt"></i> Бөлүшүү</a>
-      <a href="#"><i class="fas fa-comment-dots"></i> Ой пикир</a>
+      <a onclick="shareApp()"><i class="fas fa-share-alt"></i> Бөлүшүү</a>
+      <a href="feedback.html"><i class="fas fa-comment-dots"></i> Ой пикир</a>
     </div>
   </div>
   <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -98,11 +99,14 @@
   <div class="header">
     <i class="fas fa-bars" onclick="toggleMenu()" style="font-size: 1.2rem; cursor: pointer;"></i>
     <h2>Категориялар</h2>
-    <i class="fas fa-search" style="font-size: 1.1rem; cursor: pointer;"></i>
+    <div class="header-icons">
+      <i class="fas fa-share-alt" onclick="shareApp()" style="font-size: 1.1rem; cursor: pointer;"></i>
+      <i class="fas fa-search" style="font-size: 1.1rem; cursor: pointer;"></i>
+    </div>
   </div>
 
   <div class="categories-grid">
-    <div class="card" onclick openCat('news')">
+    <div class="card" onclick="openCat('news')">
         <div class="cat-icon-box"><i class="fas fa-bullhorn"></i></div>
         <p>Кабарлар</p>
     </div>
@@ -138,10 +142,10 @@
         <div class="cat-icon-box"><i class="fas fa-seedling"></i></div>
         <p>Дыйкан-чарба</p>
     </div>
-<div class="card" onclick="openCat('livestock')">
-    <div class="cat-icon-box"><i class="fas fa-paw"></i></div>
-    <p>Мал чарба</p>
-</div>
+    <div class="card" onclick="openCat('livestock')">
+        <div class="cat-icon-box"><i class="fas fa-paw"></i></div>
+        <p>Мал чарба</p>
+    </div>
     <div class="card" onclick="openCat('sport')">
         <div class="cat-icon-box"><i class="fas fa-running"></i></div>
         <p>Спорт</p>
@@ -194,6 +198,36 @@
 
     function openCat(categoryId) {
         window.location.href = "index.html?cat=" + categoryId;
+    }
+
+    // БӨЛҮШҮҮ ФУНКЦИЯСЫ (АКЫРКЫ ТЕХНОЛОГИЯ МЕНЕН)
+    async function shareApp() {
+        // Эгер каптал меню ачык болсо, бөлүшүү терезеси чыкканда аны көмүскөдө жаап коёбуз
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        if (sidebar && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        const shareData = {
+            title: 'Кара-Көл Маркет',
+            text: 'Кара-Көл шаарынын онлайн базары. Сиз дагы кирип жарнама бериңиз же керектүү нерсеңизди табыңыз!',
+            url: window.location.origin + '/index.html' // Негизги башкы бетке багытталган шилтеме
+        };
+
+        try {
+            // Эгер телефондо же заманбап браузерде иштесе (атайын системалык менюну ачат)
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                // Компьютерде же эски браузерде автоматтык түрдө шилтемени көчүрүп алат
+                await navigator.clipboard.writeText(shareData.url);
+                alert("Сайттын шилтемеси көчүрүлдү! Каалаган адамга жөнөтсөңүз болот.");
+            }
+        } catch (err) {
+            console.log('Бөлүшүү токтотулду же ката кетти:', err);
+        }
     }
   </script>
 </body>

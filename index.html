@@ -13,7 +13,6 @@
     .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .header-top h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
     
-    /* КООЗ АДМИН БАТЫРМАСЫ */
     .admin-btn {
       background: rgba(255, 255, 255, 0.2);
       color: white;
@@ -29,10 +28,7 @@
       transition: all 0.2s ease;
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
-    .admin-btn:hover {
-      background: white;
-      color: #ff4d4d;
-    }
+    .admin-btn:hover { background: white; color: #ff4d4d; }
 
     .search-box { position: relative; width: 100%; box-sizing: border-box; }
     .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; font-size: 16px; }
@@ -74,133 +70,124 @@
         to { transform: translate(-50%, -50%); opacity: 1; }
     }
 
-    /* Категориялар (Горизонталдык сыдырма) */
-    .section-title { padding: 15px 15px 5px; font-weight: bold; font-size: 0.95rem; color: #555; }
-    .categories-container {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding: 10px 15px;
-      scrollbar-width: none; 
+    /* ---------------------------------------------------- */
+    /* СҮРӨТТӨГҮДӨЙ СҮПСҮЛҮҮ БӨЛҮШҮҮ ТЕРЕЗЕСИНИН СТИЛДЕРИ  */
+    /* ---------------------------------------------------- */
+    .share-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 5000;
+        display: none;
+        align-items: center;
+        justify-content: center;
     }
-    .categories-container::-webkit-scrollbar { display: none; }
-    
-    .cat-item {
-      min-width: 80px;
-      background: white;
-      border-radius: 15px;
-      padding: 12px 5px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border: none;
-      cursor: pointer;
+    .share-modal {
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 8px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        overflow: hidden;
+        animation: modalScale 0.2s ease-out;
     }
-/* Эски .cat-item img стилинин ордуна же анын астына кошуңуз */
-.cat-item img, .cat-item .cat-icon-wrap { 
-  width: 45px; 
-  height: 45px; 
-  border-radius: 50%; 
-  margin-bottom: 8px; 
-}
-.cat-item .cat-icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fdf2f2; /* Жумшак ачык кызыл фон */
-  color: #ff4d4d;      /* Негизги кызыл түс */
-  font-size: 18px;
-  transition: all 0.2s ease;
-}
-/* Активдүү болуп тандалгандагы иконканын түсү */
-.cat-item.active .cat-icon-wrap {
-  background: #ff4d4d;
-  color: white;
-}
-
-    /* Жарнамалар тизмеги */
-    .ads-container { 
-        display: grid; 
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 8px; 
-        padding: 8px; 
-        background: #f8f9fa;
+    @keyframes modalScale {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
     }
-
-    .ad-card { 
-        background: white; 
-        border-radius: 8px; 
-        overflow: hidden; 
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border: 1px solid #eee;
-    }
-
-    .ad-card img { 
-        width: 100%; 
-        height: 120px; 
-        object-fit: cover; 
-    }
-
-    .ad-info { 
-        padding: 8px; 
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        flex-grow: 1;
-    }
-
-    .ad-price { 
-        color: #ff4d4d; 
-        font-weight: 700; 
-        font-size: 14px; 
-        margin-bottom: 3px;
-    }
-
-    .ad-info h4 { 
-        margin: 0; 
-        font-size: 12px; 
-        color: #333; 
-        font-weight: 400;
-        line-height: 1.3;
-        height: 32px; 
-        overflow: hidden; 
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-    }
-
-    .ad-meta {
+    .share-modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 5px;
-        font-size: 9px; 
-        color: #999;
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
     }
+    .share-modal-header h3 { margin: 0; font-size: 16px; color: #333; font-weight: 600; }
+    .share-modal-header i { cursor: pointer; color: #888; font-size: 18px; transition: color 0.2s; }
+    .share-modal-header i:hover { color: #ff4d4d; }
+    .share-modal-body { padding: 25px 20px; }
+    
+    /* Шилтеме жазылып турган инпут */
+    .share-input-wrap {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 12px 15px;
+        font-size: 14px;
+        color: #444;
+        word-break: break-all;
+        margin-bottom: 20px;
+        user-select: all;
+    }
+    /* Көчүрүү / Жабуу баскычы */
+    .share-modal-footer { display: flex; justify-content: flex-end; padding: 0 20px 20px; }
+    .share-copy-btn {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .share-copy-btn:hover { background: #5a6268; }
+    
+    /* Жумшак кооз билдирүү (Toast) */
+    .custom-toast {
+        position: fixed;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 13px;
+        z-index: 6000;
+        display: none;
+        opacity: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        white-space: nowrap;
+        font-weight: 500;
+    }
+    .custom-toast.show { display: block; opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ---------------------------------------------------- */
+
+    /* Категориялар */
+    .section-title { padding: 15px 15px 5px; font-weight: bold; font-size: 0.95rem; color: #555; }
+    .categories-container { display: flex; gap: 12px; overflow-x: auto; padding: 10px 15px; scrollbar-width: none; }
+    .categories-container::-webkit-scrollbar { display: none; }
+    
+    .cat-item {
+      min-width: 80px; background: white; border-radius: 15px; padding: 12px 5px; text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; display: flex; flex-direction: column; align-items: center; border: none; cursor: pointer;
+    }
+    .cat-item img, .cat-item .cat-icon-wrap { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 8px; }
+    .cat-item .cat-icon-wrap { display: flex; align-items: center; justify-content: center; background: #fdf2f2; color: #ff4d4d; font-size: 18px; transition: all 0.2s ease; }
+    .cat-item.active .cat-icon-wrap { background: #ff4d4d; color: white; }
+
+    /* Жарнамалар тизмеги */
+    .ads-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 8px; background: #f8f9fa; }
+    .ad-card { background: white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; }
+    .ad-card img { width: 100%; height: 120px; object-fit: cover; }
+    .ad-info { padding: 8px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+    .ad-price { color: #ff4d4d; font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+    .ad-info h4 { margin: 0; font-size: 12px; color: #333; font-weight: 400; line-height: 1.3; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .ad-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; font-size: 9px; color: #999; }
+
+    .share-btn { background: none; border: none; color: #888; cursor: pointer; padding: 6px; font-size: 14px; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+    .share-btn:hover { color: #ff4d4d; }
 
     @media (max-width: 768px) {
-        .ads-container {
-            grid-template-columns: repeat(2, 1fr); 
-        }
-        .ad-modal-window {
-            top: auto;
-            bottom: 0;
-            left: 0;
-            transform: none;
-            width: 100%;
-            height: 85vh;
-            border-radius: 20px 20px 0 0;
-            animation: mobileSheetUp 0.3s ease-out;
-        }
-        @keyframes mobileSheetUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
+        .ads-container { grid-template-columns: repeat(2, 1fr); }
+        .ad-modal-window { top: auto; bottom: 0; left: 0; transform: none; width: 100%; height: 85vh; border-radius: 20px 20px 0 0; animation: mobileSheetUp 0.3s ease-out; }
+        @keyframes mobileSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     }
     
     /* BOTTOM NAV */
@@ -213,17 +200,34 @@
 </head>
 <body>
 
+  <div id="customToast" class="custom-toast">Шилтеме көчүрүлдү!</div>
+
+  <div class="share-modal-overlay" id="shareModalOverlay" onclick="closeShareModal()">
+      <div class="share-modal" onclick="event.stopPropagation()">
+          <div class="share-modal-header">
+              <h3 id="shareModalTitle">Толук шилтеме</h3>
+              <i class="fas fa-times" onclick="closeShareModal()"></i>
+          </div>
+          <div class="share-modal-body">
+              <div class="share-input-wrap" id="shareLinkContainer">Дарек бул жерге чыгат...</div>
+          </div>
+          <div class="share-modal-footer">
+              <button class="share-copy-btn" id="shareCopyBtn" onclick="executeCopy()">Көчүрүү</button>
+          </div>
+      </div>
+  </div>
+
   <div class="sidebar" id="sidebar">
      <div class="sidebar-header">
-      <h2 style=" margin: 0; font-size: 1.2rem;  color:#ff0000;">Меню</h2>
+      <h2 style=" margin: 0; font-size: 1.2rem; color:#ff0000;">Меню</h2>
       <i class="fas fa-times" onclick="toggleMenu()" style="cursor:pointer; font-size:1.2rem; color:#888;"></i>
     </div>
     <div class="sidebar-links">
       <a href="index.html"><i class="fas fa-home"></i> Башкы бет</a>
       <a href="categories.html"><i class="fas fa-th-large"></i> Категориялар</a>
       <a href="jardama.html"><i class="fas fa-plus-circle"></i> Жарнама кошуу</a>
-      <a href="#"><i class="fas fa-share-alt"></i> Бөлүшүү</a>
-      <a href="#"><i class="fas fa-comment-dots"></i> Ой пикир</a>
+      <a href="#" onclick="shareMainSite(event)"><i class="fas fa-share-alt"></i> Бөлүшүү</a>
+      <a href="feedback.html"><i class="fas fa-comment-dots"></i> Ой пикир</a>
     </div>
   </div>
   <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -349,7 +353,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy, updateDoc, doc as fsDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, getDoc, doc as fsDoc, query, orderBy, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCE6B0d8QJlHmo7cCDunwR20aC4eM6NvEA",
@@ -364,6 +368,9 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  let textToCopy = ""; // Көчүрүлө турган текстти сактоочу глобалдык өзгөрмө
+
+  
   const categoryNames = {
     'all': 'Баардыгы', 'news': 'Кабарлар', 'auto': 'Автоунаа', 'house': 'Кыймылсыз мүлк',
     'phone': 'Телефондор', 'construction': 'Курулуш материалдар', 'job': 'Жумуш', 'food': 'Тамак-аш',
@@ -385,23 +392,11 @@
     const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
     const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-    if (compareDate.getTime() === today.getTime()) {
-        return `Бүгүн, ${timeStr}`;
-    }
+    if (compareDate.getTime() === today.getTime()) return `Бүгүн, ${timeStr}`;
+    if (compareDate.getTime() === yesterday.getTime()) return `Кечээ, ${timeStr}`;
     
-    if (compareDate.getTime() === yesterday.getTime()) {
-        return `Кечээ, ${timeStr}`;
-    }
-    
-    const kgMonths = [
-        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", 
-        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
-    ];
-    
-    const day = date.getDate();
-    const month = kgMonths[date.getMonth()];
-    
-    return `${day} ${month}, ${timeStr}`;
+    const kgMonths = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+    return `${date.getDate()} ${kgMonths[date.getMonth()]}, ${timeStr}`;
   }
 
   window.toggleMenu = function() {
@@ -413,43 +408,23 @@
 
   window.currentImageIndexes = window.currentImageIndexes || {};
   window.nextImg = function(adId, imagesJson, event) {
-    if (event) {
-      event.stopPropagation(); 
-      event.preventDefault();
-    }
-    
+    if (event) { event.stopPropagation(); event.preventDefault(); }
     let images = [];
-    try {
-      images = typeof imagesJson === 'string' ? JSON.parse(imagesJson) : imagesJson;
-    } catch(e) {
-      console.error(e);
-      return;
-    }
-
+    try { images = typeof imagesJson === 'string' ? JSON.parse(imagesJson) : imagesJson; } catch(e) { return; }
     if (!images || images.length <= 1) return;
-
-    if (window.currentImageIndexes[adId] === undefined) {
-      window.currentImageIndexes[adId] = 0;
-    }
-
+    if (window.currentImageIndexes[adId] === undefined) window.currentImageIndexes[adId] = 0;
     window.currentImageIndexes[adId] = (window.currentImageIndexes[adId] + 1) % images.length;
     const nextIdx = window.currentImageIndexes[adId];
-
     const imgElement = document.getElementById(`img-${adId}`);
     const countSpan = document.getElementById(`count-${adId}`);
-
     if (imgElement) imgElement.src = images[nextIdx];
     if (countSpan) countSpan.innerText = `${nextIdx + 1}/${images.length}`;
   };
 
   window.showAdDetails = function(adId, imagesJson, categoryLabel, price, valuta, text, phone, waLink, views, dateStr) {
     let images = [];
-    try {
-      images = typeof imagesJson === 'string' ? JSON.parse(imagesJson) : imagesJson;
-    } catch(e) { images = ["https://via.placeholder.com/150"]; }
-
+    try { images = typeof imagesJson === 'string' ? JSON.parse(imagesJson) : imagesJson; } catch(e) { images = ["https://via.placeholder.com/150"]; }
     window.currentImageIndexes[`detail-${adId}`] = 0;
-
     const adModal = document.getElementById('adModal');
     const adOverlay = document.getElementById('adOverlay');
 
@@ -458,7 +433,6 @@
             <span style="color:#333;">Жарнама толук көрүнүшү</span>
             <i class="fas fa-times" onclick="closeAdDetails()" style="cursor: pointer; padding: 5px; font-size: 22px; color: #888;"></i>
         </div>
-        
         <div style="flex: 1; overflow-y: auto; padding-bottom: 80px;">
             <div style="position: relative; width: 100%; height: 260px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 <img id="img-detail-${adId}" src="${images[0]}" style="width: 100%; height: 100%; object-fit: contain;">
@@ -479,7 +453,6 @@
                 </div>
             </div>
         </div>
-
         <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #eee; padding: 12px; display: flex; gap: 10px; box-sizing: border-box; z-index: 3600;">
             <a href="tel:${phone}" style="text-decoration: none; background: #007bff; color: white; flex: 1; text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <i class="fas fa-phone-alt"></i> Чалуу
@@ -489,7 +462,6 @@
             </a>
         </div>
     `;
-
     adModal.style.display = 'flex';
     adOverlay.style.display = 'block';
     document.body.style.overflow = 'hidden'; 
@@ -499,38 +471,32 @@
     document.getElementById('adModal').style.display = 'none';
     document.getElementById('adOverlay').style.display = 'none';
     document.body.style.overflow = 'auto';
+    
+    // Жабылганда даректеги ?id=... параметрин өчүрүп салат
+    const url = new URL(window.location.href);
+    url.searchParams.delete('id');
+    window.history.pushState({}, '', url);
   };
 
   window.filterAds = function(category, element) {
     window.closeAdDetails();
-
     const items = document.querySelectorAll('.cat-item');
     items.forEach(item => item.classList.remove('active'));
     if (element) element.classList.add('active');
 
     const ads = document.querySelectorAll('.ad-card');
     let count = 0;
-
     ads.forEach(ad => {
       const adCategory = ad.getAttribute('data-category');
-      if (category === 'all' || adCategory === category) {
-        ad.style.display = 'flex'; 
-        count++;
-      } else {
-        ad.style.display = 'none';
-      }
+      if (category === 'all' || adCategory === category) { ad.style.display = 'flex'; count++; } else { ad.style.display = 'none'; }
     });
 
     const adsContainer = document.getElementById('adsList');
     const existingMsg = document.getElementById('emptyMsg');
     if (existingMsg) existingMsg.remove();
-
     if (count === 0 && adsContainer) {
-      const msg = document.createElement('p');
-      msg.id = 'emptyMsg';
-      msg.style.cssText = "grid-column: 1/-1; text-align: center; color: #999; padding: 20px;";
-      msg.innerText = "Бул бөлүмдө азырынча жарнама жок";
-      adsContainer.appendChild(msg);
+      const msg = document.createElement('p'); msg.id = 'emptyMsg'; msg.style.cssText = "grid-column: 1/-1; text-align: center; color: #999; padding: 20px;";
+      msg.innerText = "Бул бөлүмдө азырынча жарнама жок"; adsContainer.appendChild(msg);
     }
   };
 
@@ -543,46 +509,130 @@
     }
   }
 
+  // ----------------------------------------------------
+  // БӨЛҮШҮҮ ТЕРЕЗЕСИНИН ФУНКЦИЯЛАРЫ (СҮРӨТТӨГҮДӨЙ)
+  // ----------------------------------------------------
+  function openShareModal(title, displayUrl, fullTextToCopy) {
+    document.getElementById("shareModalTitle").innerText = title;
+    document.getElementById("shareLinkContainer").innerText = displayUrl;
+    textToCopy = fullTextToCopy; 
+    document.getElementById("shareModalOverlay").style.display = "flex";
+  }
+
+  window.closeShareModal = function() {
+    document.getElementById("shareModalOverlay").style.display = "none";
+  };
+
+  function showToast(message) {
+    const toast = document.getElementById("customToast");
+    if (!toast) return;
+    toast.innerText = message;
+    toast.classList.add("show");
+    setTimeout(() => { toast.classList.remove("show"); }, 2000);
+  }
+
+  window.executeCopy = function() {
+    const textArea = document.createElement("textarea");
+    textArea.value = textToCopy;
+    textArea.style.position = "fixed"; 
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        window.closeShareModal();
+        showToast("Шилтеме көчүрүлдү!");
+    } catch (err) {
+        console.error("Ката:", err);
+    }
+    document.body.removeChild(textArea);
+  };
+
+  window.shareAd = function(adId, title, price, event) {
+    if (event) { event.stopPropagation(); event.preventDefault(); }
+    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${adId}`;
+    const fullText = `${title} — Баасы: ${price}. Кененирээк шилтемеде: ${shareUrl}`;
+    const cleanDisplayUrl = `${window.location.host}${window.location.pathname}?id=${adId}`;
+    
+    openShareModal("Толук шилтеме", cleanDisplayUrl, fullText);
+  };
+
+  window.shareMainSite = function(event) {
+    if (event) { event.preventDefault(); }
+    window.toggleMenu(); 
+    const shareUrl = window.location.origin + window.location.pathname;
+    const fullText = `Кара-Көл Маркет — Жарнамалар сайты. Сиз дагы кирип көрүңүз: ${shareUrl}`;
+    const cleanDisplayUrl = window.location.host + window.location.pathname;
+    
+    openShareModal("Толук шилтеме", cleanDisplayUrl, fullText);
+  };
+
+  // ----------------------------------------------------
+  // ШИЛТЕМЕ АРКЫЛУУ КИРГЕНДЕ ЖАРНАМАНЫ АВТОМАТТЫК ТҮРДӨ АЧУУ
+  // ----------------------------------------------------
+  async function checkDirectAdLink() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adId = urlParams.get('id');
+    
+    if (adId) {
+        try {
+            const docRef = fsDoc(db, "ads", adId);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                const ad = docSnap.data();
+                const categoryID = ad.category || 'all';
+                const categoryLabel = categoryNames[categoryID] || 'Башка';
+                const text = ad.title || ad.adText || "Аталышы жок";
+                const price = ad.price || ad.adPrice || "0";
+                const valuta = ad.currency || ad.adValuta || "сом";
+                const phone = ad.phone || ad.adPhone || "";
+                const views = ad.views || 0;
+                const dateStr = formatRelativeDate(ad.createdAt);
+                const allImages = ad.images || (ad.image || ad.img ? [ad.image || ad.img] : ["https://via.placeholder.com/150"]);
+                const waPhone = phone.replace(/\D/g, ''); 
+                const waLink = `https://wa.me/${waPhone}?text=Саламатсызбы!`;
+
+                // Көрүү санын көбөйтүү
+                await updateDoc(docRef, { views: increment(1) });
+
+                // Модалдык терезени дароо ачуу
+                window.showAdDetails(adId, JSON.stringify(allImages), categoryLabel, price, valuta, text, phone, waLink, views + 1, dateStr);
+            }
+        } catch (e) {
+            console.error("Түз шилтемени жүктөөдө ката кетти:", e);
+        }
+    }
+  }
+
   async function getAds() {
     const adsContainer = document.getElementById('adsList');
     if (!adsContainer) return;
-    
     try {
         const q = query(collection(db, "ads"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
         adsContainer.innerHTML = ''; 
-
         if(querySnapshot.empty) {
-            adsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Азырынча эч кандай жарнама жок.</p>';
-            return;
+            adsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Азырынча эч кандай жарнама жок.</p>'; return;
         }
-
         querySnapshot.forEach((doc) => {
-            const ad = doc.data();
-            const adId = doc.id;
-            const categoryID = ad.category || 'all';
-            const categoryLabel = categoryNames[categoryID] || 'Башка';
-            const text = ad.title || ad.adText || "Аталышы жок";
-            const price = ad.price || ad.adPrice || "0";
-            const valuta = ad.currency || ad.adValuta || "сом";
-            const phone = ad.phone || ad.adPhone || "";
-            const views = ad.views || 0;
-            const dateStr = formatRelativeDate(ad.createdAt);
-
+            const ad = doc.data(); const adId = doc.id; const categoryID = ad.category || 'all'; const categoryLabel = categoryNames[categoryID] || 'Башка';
+            const text = ad.title || ad.adText || "Аталышы жок"; const price = ad.price || ad.adPrice || "0"; const valuta = ad.currency || ad.adValuta || "сом";
+            const phone = ad.phone || ad.adPhone || ""; const views = ad.views || 0; const dateStr = formatRelativeDate(ad.createdAt);
             const allImages = ad.images || (ad.image || ad.img ? [ad.image || ad.img] : ["https://via.placeholder.com/150"]);
-            const waPhone = phone.replace(/\D/g, ''); 
-            const waLink = `https://wa.me/${waPhone}?text=Саламатсызбы!`;
+            const waPhone = phone.replace(/\D/g, ''); const waLink = `https://wa.me/${waPhone}?text=Саламатсызбы!`;
 
-            const adCard = document.createElement('div');
-            adCard.className = "ad-card";
-            adCard.setAttribute('data-category', categoryID);
-            adCard.style.cursor = "pointer";
-
+            const adCard = document.createElement('div'); adCard.className = "ad-card"; adCard.setAttribute('data-category', categoryID); adCard.style.cursor = "pointer";
             adCard.onclick = async function(event) {
-                if (event.target.closest('a') || event.target.closest('[id^="badge-"]')) return;
-                try {
-                    await updateDoc(fsDoc(db, "ads", adId), { views: increment(1) });
-                } catch (e) {}
+                if (event.target.closest('a') || event.target.closest('[id^="badge-"]') || event.target.closest('.share-btn')) return;
+                
+                // Карточканы басканда дарекке ID кошуп коюу
+                const url = new URL(window.location.href);
+                url.searchParams.set('id', adId);
+                window.history.pushState({}, '', url);
+
+                try { await updateDoc(fsDoc(db, "ads", adId), { views: increment(1) }); } catch (e) {}
                 window.showAdDetails(adId, JSON.stringify(allImages), categoryLabel, price, valuta, text, phone, waLink, views + 1, dateStr);
             };
 
@@ -602,19 +652,22 @@
                         <h4>${text}</h4>
                     </div>
                     <div class="ad-meta">
-                        <span><i class="far fa-eye"></i> ${views}</span>
-                        <span><i class="far fa-clock"></i> ${dateStr}</span>
+                        <div><span><i class="far fa-eye"></i> ${views}</span><span style="margin-left: 5px;"><i class="far fa-clock"></i> ${dateStr}</span></div>
+                        <button class="share-btn" onclick="shareAd('${adId}', '${text.replace(/'/g, "\\'")}', '${price} ${valuta}', event)" title="Бөлүшүү">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
                     </div>
                 </div>
             `;
             adsContainer.appendChild(adCard);
         });
-
         checkUrlParamAndFilter();
+        
+        // Жарнамалар тизмеси даяр болгондо, даректе түз шилтеме келгенби текшерет
+        checkDirectAdLink();
 
     } catch (error) {
-        console.error("Ката кетти: ", error);
-        adsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Маалыматты жүктөөдө ката кетти.</p>';
+        console.error("Ката кетти: ", error); adsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Маалыматты жүктөөдө ката кетти.</p>';
     }
   }
 
@@ -622,20 +675,11 @@
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
       searchInput.addEventListener("input", (e) => {
-        const searchText = e.target.value.toLowerCase();
-        const ads = document.querySelectorAll(".ad-card");
-
+        const searchText = e.target.value.toLowerCase(); const ads = document.querySelectorAll(".ad-card");
         ads.forEach(ad => {
-          const h4Element = ad.querySelector("h4");
-          const priceElement = ad.querySelector(".ad-price");
-          const adTitle = h4Element ? h4Element.innerText.toLowerCase() : "";
-          const adPrice = priceElement ? priceElement.innerText.toLowerCase() : "";
-          
-          if (adTitle.includes(searchText) || adPrice.includes(searchText)) {
-            ad.style.display = "flex";
-          } else {
-            ad.style.display = "none";
-          }
+          const h4Element = ad.querySelector("h4"); const priceElement = ad.querySelector(".ad-price");
+          const adTitle = h4Element ? h4Element.innerText.toLowerCase() : ""; const adPrice = priceElement ? priceElement.innerText.toLowerCase() : "";
+          if (adTitle.includes(searchText) || adPrice.includes(searchText)) { ad.style.display = "flex"; } else { ad.style.display = "none"; }
         });
       });
     }

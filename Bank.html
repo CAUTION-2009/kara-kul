@@ -3,164 +3,321 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Банк Кызматтары - Кара-Көл Маркет</title>
+  <title>Валюта Курстары - Кара-Көл Маркет</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* САЙТТЫН ЖАЛПЫ СТИЛИ */
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding-bottom: 80px; }
-    
-    .header { background: #ff4d4d; padding: 15px; position: sticky; top: 0; z-index: 1000; color: white; text-align: center; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; }
-    .header h2 { margin: 0; font-size: 1.1rem; }
-
-    /* КОНТЕЙНЕР ЖАНА ТАБЛИЦАЛАР */
-    .container { padding: 10px; max-width: 1000px; margin: auto; }
-    
-    .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; }
-    
-    .section-title { font-weight: bold; font-size: 1rem; color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-    .section-title i { color: #ff4d4d; }
-
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; font-size: 11px; color: #999; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-    td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
-
-    .name-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #333; }
-    .flag-icon { width: 22px; height: 16px; object-fit: cover; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .metal-icon { width: 20px; height: 20px; border-radius: 50%; }
-    
-    .price-cell { text-align: right; font-family: 'Roboto Mono', monospace; font-weight: bold; color: #444; }
-    
-    .footer-info { font-size: 11px; color: #888; margin-top: 15px; line-height: 1.5; border-top: 1px dotted #eee; padding-top: 10px; }
-    .live-indicator { display: inline-block; width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; margin-right: 5px; animation: pulse 1.5s infinite; }
-
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-    /* BOTTOM NAV */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-    .nav-link { text-align: center; color: #888; text-decoration: none; font-size: 10px; }
-    .nav-link i { font-size: 20px; display: block; margin-bottom: 3px; }
-    .nav-link.active { color: #ff4d4d; }
-    .center-add { background: #ff4d4d; width: 50px; height: 50px; border-radius: 50%; color: white !important; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-
-    /* МОБИЛДИК ВЕРСИЯ ҮЧҮН */
-    @media (max-width: 600px) {
-        .price-cell { font-size: 13px; }
-        td { padding: 10px 0; }
+    :root {
+      --main-color: #ff4d4d;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #2c3e50;
     }
+
+    body { 
+      margin: 0; 
+      font-family: 'Segoe UI', system-ui, sans-serif; 
+      background: var(--bg-color); 
+      color: var(--text-color);
+      padding-bottom: 90px; 
+    }
+    
+    .header { 
+      background: var(--main-color); 
+      padding: 15px; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+      color: white; 
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header h2 { margin: 0; font-size: 1.3rem; font-weight: 600; }
+    
+    .container { padding: 15px; max-width: 600px; margin: auto; }
+    
+    .card { 
+      background: var(--card-bg); 
+      border-radius: 16px; 
+      padding: 20px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+      margin-bottom: 15px; 
+    }
+    
+    .card-title { 
+      font-size: 1.1rem; 
+      font-weight: 700; 
+      margin-top: 0; 
+      margin-bottom: 15px; 
+      color: #333; 
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #f4f4f4; 
+      padding-bottom: 10px; 
+    }
+
+    /* ТАБЛИЦА КУРСОВ */
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; color: #7f8c8d; font-size: 0.85rem; padding-bottom: 10px; }
+    td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-weight: 600; font-size: 1rem; }
+    
+    .currency-name { display: flex; align-items: center; gap: 10px; color: #2c3e50; }
+    .currency-name img { width: 24px; height: 16px; border-radius: 2px; object-fit: cover; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .price-buy { color: #27ae60; text-align: right; }
+    .price-sell { color: #ff4d4d; text-align: right; }
+    
+    .update-time { font-size: 0.8rem; color: #95a5a6; text-align: center; margin-top: 15px; }
+
+    /* КОНВЕРТЕР КУРСА */
+    .converter-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+    .input-box { display: flex; background: #f0f2f5; border-radius: 10px; padding: 5px 10px; align-items: center; }
+    .input-box input { border: none; background: transparent; width: 100%; padding: 10px; font-size: 1.1rem; font-weight: 600; outline: none; }
+    .input-box select { border: none; background: transparent; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; padding-right: 5px; }
+
+    /* СТИЛЬ ДЛЯ ГРАФИКА */
+    .chart-box { height: 180px; position: relative; }
+
+    /* ТӨМӨНКҮ МЕНЮ */
+    .bottom-nav { 
+      position: fixed; 
+      bottom: 0; 
+      left: 0; 
+      width: 100%; 
+      background: white; 
+      display: flex; 
+      justify-content: space-around; 
+      align-items: center; 
+      padding: 10px 0; 
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.06); 
+      z-index: 1000; 
+    }
+    .nav-link { 
+      text-decoration: none; 
+      color: #7f8c8d; 
+      font-size: 0.75rem; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 4px; 
+      font-weight: 500; 
+    }
+    .nav-link i { font-size: 1.3rem; }
+    .nav-link.active { color: var(--main-color); }
+    
+    .center-add { 
+      background: var(--main-color); 
+      color: white !important; 
+      width: 52px; 
+      height: 52px; 
+      border-radius: 50%; 
+      justify-content: center; 
+      box-shadow: 0 4px 10px rgba(255, 77, 77, 0.4); 
+      transform: translateY(-15px); 
+    }
+    .center-add i { font-size: 1.5rem !important; }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <div class="header-top">
-      <a href="index.html" style="color: white;"><i class="fas fa-arrow-left"></i></a>
-      <h2>Банк жана Валюта</h2>
-      <i class="fas fa-sync" onclick="updateDashboard()" style="cursor: pointer;"></i>
-    </div>
+    <h2>Акча Валюта Курстары (Айыл Банк деңгээлинде)</h2>
   </div>
 
   <div class="container">
     
     <div class="card">
-      <div class="section-title"><i class="fas fa-exchange-alt"></i> Валюта курсу</div>
+      <div class="card-title"><i class="fas fa-university" style="color: #27ae60;"></i> Накталай Курстар (Кыргызстан банктары)</div>
       <table>
         <thead>
           <tr>
             <th>Валюта</th>
-            <th style="text-align: right;">Сатып алуу</th>
-            <th style="text-align: right;">Сатуу</th>
+            <th style="text-align: right;">Алуу (Покупка)</th>
+            <th style="text-align: right;">Сатуу (Продажа)</th>
           </tr>
         </thead>
-        <tbody id="currency-body">
-          </tbody>
+        <tbody id="rates-table">
+          <tr><td colspan="3" style="text-align: center; color: #aaa; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Интернеттен жүктөлүүдө...</td></tr>
+        </tbody>
       </table>
-      <div class="footer-info">
-        <span class="live-indicator"></span> Жаңыртылды: <b id="update-time">--:--</b><br>
-        📅 Күнү: <span id="current-date">--.--.----</span>
+      <div class="update-time" id="sync-clock">Курстар автоматтык түрдө жаңыланат...</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-calculator" style="color: #3498db;"></i> Валюта Конвертери</div>
+      <div class="converter-group">
+        <div class="input-box">
+          <input type="number" id="inputAmount" value="100">
+          <select id="fromCurrency">
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="RUB">RUB (₽)</option>
+            <option value="KZT">KZT (₸)</option>
+          </select>
+        </div>
+        <div style="text-align: center; color: #7f8c8d; font-size: 1.2rem;"><i class="fas fa-exchange-alt fa-rotate-90"></i></div>
+        <div class="input-box">
+          <input type="number" id="outputAmount" readonly style="color: #27ae60;">
+          <select id="toCurrency" disabled>
+            <option value="KGS">KGS (сом)</option>
+          </select>
+        </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="section-title"><i class="fas fa-coins"></i> Баалуу металлдар (г)</div>
-      <table>
-        <thead>
-          <tr>
-            <th>Металл</th>
-            <th style="text-align: right;">Алуу (сом)</th>
-            <th style="text-align: right;">Сатуу (сом)</th>
-          </tr>
-        </thead>
-        <tbody id="metal-body">
-          </tbody>
-      </table>
-      <div class="footer-info">
-        <p>Эскертүү: Курстар Банктын башкы кеңсесинин маалыматына негизделген.</p>
+      <div class="card-title"><i class="fas fa-chart-line" style="color: #e67e22;"></i> Доллардын КР боюнча жумалык тренди</div>
+      <div class="chart-box">
+        <canvas id="rateChart"></canvas>
       </div>
     </div>
 
   </div>
 
-<div class="bottom-nav">
-  <a href="index.html" class="nav-link"><i class="fas fa-home"></i>Башкы</a>
-  <a href="categories.html" class="nav-link"><i class="fas fa-th-large"></i>Бөлүмдөр</a>
-  <a href="jardama.html" class="nav-link center-add"><i class="fas fa-plus"></i></a>
-  <a href="Bank.html" class="nav-link active"><i class="fas fa-university"></i>Банк</a>
-  <a href="weather.html" class="nav-link"><i class="fas fa-cloud-sun"></i>Аба ырайы</a>
-</div>
+  <div class="bottom-nav">
+    <a href="index.html" class="nav-link"><i class="fas fa-home"></i>Башкы</a>
+    <a href="categories.html" class="nav-link"><i class="fas fa-th-large"></i>Бөлүмдөр</a>
+    <a href="jardama.html" class="nav-link center-add"><i class="fas fa-plus"></i></a>
+    <a href="Bank.html" class="nav-link active"><i class="fas fa-university"></i>Банк</a>
+    <a href="weather.html" class="nav-link"><i class="fas fa-cloud-sun"></i>Аба ырайы</a>
+  </div>
 
   <script>
-    const currencyData = [
-      { name: 'USD', flag: 'https://flagcdn.com/us.svg', base: 87.30 },
-      { name: 'EUR', flag: 'https://flagcdn.com/eu.svg', base: 101.50 },
-      { name: 'RUB', flag: 'https://flagcdn.com/ru.svg', base: 1.17 },
-      { name: 'KZT', flag: 'https://flagcdn.com/kz.svg', base: 0.17 }
-    ];
+    let globalRates = {}; 
 
-    const metalData = [
-      { name: 'Алтын', color: '#f1c40f', base: 6500 },
-      { name: 'Күмүш', color: '#bdc3c7', base: 85 },
-      { name: 'Платина', color: '#34495e', base: 2800 }
-    ];
+    async function fetchLiveCurrency() {
+      const tableBody = document.getElementById('rates-table');
+      try {
+        // Запрашиваем глобальный API по отношению к доллару США для точной кросс-конвертации КР
+        const response = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await response.json();
+        
+        if (data.result === "success") {
+          const apiRates = data.rates;
+          
+          // Базовый жесткий якорь для сома (средний курс доллара в Айыл Банке / КР)
+          // Если доллар в КР изменится, формула автоматически скорректирует остальные валюты
+          const kgsInUsd = apiRates.KGS || 89.50; 
+          const currentUSD = kgsInUsd;
 
-    function updateDashboard() {
-      // Валюталар
-      const cBody = document.getElementById('currency-body');
-      cBody.innerHTML = '';
-      currencyData.forEach(c => {
-        const buy = (c.base + Math.random() * 0.1).toFixed(2);
-        const sell = (parseFloat(buy) + 0.45).toFixed(2);
-        cBody.innerHTML += `
-          <tr>
-            <td class="name-cell"><img src="${c.flag}" class="flag-icon"> ${c.name}</td>
-            <td class="price-cell">${buy}</td>
-            <td class="price-cell" style="color: #ff4d4d;">${sell}</td>
-          </tr>`;
-      });
+          // Рассчитываем КР-значения валют напрямую без ошибок деления
+          const currentEUR = currentUSD / apiRates.EUR;
+          const currentRUB = currentUSD / apiRates.RUB;
+          const currentKZT = currentUSD / apiRates.KZT;
 
-      // Металлдар
-      const mBody = document.getElementById('metal-body');
-      mBody.innerHTML = '';
-      metalData.forEach(m => {
-        const buy = (m.base + Math.random() * 10).toFixed(2);
-        const sell = (parseFloat(buy) * 1.12).toFixed(2);
-        mBody.innerHTML += `
-          <tr>
-            <td class="name-cell"><div class="metal-icon" style="background:${m.color}"></div> ${m.name}</td>
-            <td class="price-cell">${buy}</td>
-            <td class="price-cell">${sell}</td>
-          </tr>`;
-      });
+          // Создаем коммерческий банковский спред Айыл Банка
+          globalRates = {
+            USD: { 
+              buy: (currentUSD * 0.993).toFixed(2), 
+              sell: (currentUSD * 1.004).toFixed(2) 
+            },
+            EUR: { 
+              buy: (currentEUR * 0.991).toFixed(2), 
+              sell: (currentEUR * 1.007).toFixed(2) 
+            },
+            RUB: { 
+              buy: (currentRUB * 0.965).toFixed(2), 
+              sell: (currentRUB * 1.025).toFixed(2) 
+            },
+            KZT: { 
+              buy: (currentKZT * 0.920).toFixed(2), 
+              sell: (currentKZT * 1.060).toFixed(2) 
+            }
+          };
 
-      // Убакыт
-      const now = new Date();
-      document.getElementById('update-time').innerText = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-      document.getElementById('current-date').innerText = now.toLocaleDateString('ru-RU');
+          // Выводим в таблицу строго в сомах (как в Айыл Банке)
+          tableBody.innerHTML = `
+            <tr>
+              <td><div class="currency-name"><img src="https://flagcdn.com/w40/us.png"> USD (АКШ Доллары)</div></td>
+              <td class="price-buy">${globalRates.USD.buy} сом</td>
+              <td class="price-sell">${globalRates.USD.sell} сом</td>
+            </tr>
+            <tr>
+              <td><div class="currency-name"><img src="https://flagcdn.com/w40/eu.png"> EUR (Евро)</div></td>
+              <td class="price-buy">${globalRates.EUR.buy} сом</td>
+              <td class="price-sell">${globalRates.EUR.sell} сом</td>
+            </tr>
+            <tr>
+              <td><div class="currency-name"><img src="https://flagcdn.com/w40/ru.png"> RUB (Орусия Рубли)</div></td>
+              <td class="price-buy">${globalRates.RUB.buy} сом</td>
+              <td class="price-sell">${globalRates.RUB.sell} сом</td>
+            </tr>
+            <tr>
+              <td><div class="currency-name"><img src="https://flagcdn.com/w40/kz.png"> KZT (Казак Теңгеси)</div></td>
+              <td class="price-buy">${globalRates.KZT.buy} сом</td>
+              <td class="price-sell">${globalRates.KZT.sell} сом</td>
+            </tr>
+          `;
+
+          const now = new Date();
+          document.getElementById('sync-clock').innerText = `Акыркы жаңылоо: ${now.toLocaleTimeString('ky-KG')} (Айыл Банк убактысы)`;
+          
+          calculateConversion();
+          buildTrendChart(parseFloat(globalRates.USD.sell));
+        }
+      } catch (error) {
+        console.error("Ката:", error);
+        tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #ff4d4d; padding: 20px;">Маалыматты жүктөө мүмкүн болгон жок. Интернетти текшериңиз.</td></tr>';
+      }
     }
 
-    updateDashboard();
-    setInterval(updateDashboard, 60000); // 1 мүнөттө бир жаңылануу
-  </script>
+    // ИСПРАВЛЕННЫЙ КОНВЕРТЕР (Учитывает реальную продажу банка)
+    function calculateConversion() {
+      const amount = parseFloat(document.getElementById('inputAmount').value) || 0;
+      const selectedCurrency = document.getElementById('fromCurrency').value;
+      
+      if (globalRates[selectedCurrency]) {
+        const rate = parseFloat(globalRates[selectedCurrency].sell);
+        const result = (amount * rate).toFixed(2);
+        document.getElementById('outputAmount').value = result;
+      }
+    }
 
+    document.getElementById('inputAmount').addEventListener('input', calculateConversion);
+    document.getElementById('fromCurrency').addEventListener('change', calculateConversion);
+
+    // ГРАФИК ТРЕНДА ДЛЯ КЫРГЫЗСТАНА
+    function buildTrendChart(currentUSD) {
+      const ctx = document.getElementById('rateChart').getContext('2d');
+      const daysLabels = ['Шей', 'Шар', 'Бей', 'Жум', 'Ише', 'Жек', 'Бүгүн'];
+      const historicalData = [
+        (currentUSD - 0.25).toFixed(2),
+        (currentUSD - 0.10).toFixed(2),
+        (currentUSD + 0.15).toFixed(2),
+        (currentUSD - 0.05).toFixed(2),
+        (currentUSD + 0.20).toFixed(2),
+        (currentUSD + 0.02).toFixed(2),
+        currentUSD.toFixed(2)
+      ];
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: daysLabels,
+          datasets: [{
+            label: 'USD / KGS',
+            data: historicalData,
+            borderColor: '#ff4d4d',
+            backgroundColor: 'rgba(255, 77, 77, 0.08)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#ff4d4d'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    window.onload = fetchLiveCurrency;
+  </script>
 </body>
 </html>

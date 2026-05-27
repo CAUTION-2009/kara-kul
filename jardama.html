@@ -17,7 +17,7 @@
     /* ТЕЛЕФОН НОМЕРДИН КАТА ЖАНА ТУУРА СТИЛДЕРИ */
     input[type="tel"].invalid-phone { border: 2px solid #e74c3c; background-color: #fdf2f2; }
     input[type="tel"].valid-phone { border: 2px solid #2ecc71; background-color: #f2fdf5; }
-    .phone-error-msg { color: #e74c3c; font-size: 12px; margin: -4px 0 8px 4px; display: none; font-weight: 500; }
+    .phone-error-msg { color: #e74c3c; font-size: 12px; margin: -4px 0 8px 4px; display: none; font-weight: 500; line-height: 1.4; }
     
     /* Сүрөт жүктөөчү сетка */
     .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
@@ -67,7 +67,7 @@
       </div>
       
       <input type="tel" id="adPhone" placeholder="Телефон номериңиз (мис: 0700123456)">
-      <div id="phoneError" class="phone-error-msg">Номер 9 орундуу же +996 менен 13 орундуу болушу керек!</div>
+      <div id="phoneError" class="phone-error-msg">Сураныч, туура уюлдук номер киргизиңиз!</div>
       
       <p style="font-size: 12px; color: #777; margin-top: 15px;">Сүрөттөр (5ке чейин, 1-сүрөт башкы бетте көрүнөт):</p>
       <div class="upload-grid">
@@ -103,15 +103,59 @@
 
   let base64Images = { p1: "", p2: "", p3: "", p4: "", p5: "" };
 
-  // НОМЕРДИ ТЕКШЕРҮҮ ФУНКЦИЯСЫ (REAL-TIME VALIDATION)
   const phoneInput = document.getElementById('adPhone');
   const phoneError = document.getElementById('phoneError');
   const submitBtn = document.getElementById('submitBtn');
 
+  // КЫРГЫЗСТАНДЫН РАСМИЙ ОПЕРАТОРЛОРУНУН КОДДОРУН ТЕКШЕРҮҮ
+  function validateKyrgyzPhone(phone) {
+    // Бардык ашыкча белгилерди гана тазалайбыз (+ белгисин сактайбыз)
+    let clean = phone.trim().replace(/[\s\-\(\)]/g, '');
+    
+    // Эгер башында 0 бар болсо жана жалпы 10 сан болсо (мис: 0700123456) -> +996700123456 форматына өткөрөбүз
+    if (clean.startsWith('0') && clean.length === 10) {
+      clean = '+996' + clean.substring(1);
+    }
+    
+    // Эгер + белгиси жок түз 996 менен башталса (мис: 996700123456)
+    if (clean.startsWith('996') && clean.length === 12) {
+      clean = '+' + clean;
+    }
+
+    // Негизги форматты текшерүү (+996 жана 9 сан болуш керек)
+    const formatRegex = /^\+996[0-9]{9}$/;
+    if (!formatRegex.test(clean)) {
+      return { isValid: false, msg: "Номер ката! Үлгү: 0700123456 же +996700123456" };
+    }
+
+    // Кодду бөлүү (мис: 700, 555, 777)
+    const code = clean.substring(4, 7);
+    const mainNumber = clean.substring(4); // Калган 9 сан
+
+    // Фейк номерлерди бөгөттөө (мис: 777777777, 000000000 ж.б. бирдей сандар кайталанса)
+    if (/^(\d)\1{5,}/.test(mainNumber)) {
+      return { isValid: false, msg: "Мындай фейк номерлерди жазууга болбойт!" };
+    }
+
+    // Кыргызстандын уюлдук операторлорунун актуалдуу коддору
+    const kgCodes = [
+      '700', '701', '702', '703', '704', '705', '706', '707', '708', '709', '500', '501', '502', '503', '504', '505', '507', '508', '509', '200', '201', '202', '203', '205', // О!
+      '550', '551', '552', '553', '554', '555', '556', '557', '559', '990', '995', '997', '998', '999', // Mega
+      '770', '771', '772', '773', '774', '775', '776', '777', '778', '779', '220', '221', '222', '223', '224', '225', '227', '229', // Beeline
+      '880' // Salam (КТ Мобайл)
+    ];
+
+    if (!kgCodes.includes(code)) {
+      return { isValid: false, msg: "Кыргызстанда мындай код катталган эмес: (" + code + ")" };
+    }
+
+    return { isValid: true, formatted: clean };
+  }
+
+  // РЕАЛДУУ УБАГЫНДА ТЕКШЕРҮҮ (INPUT ОКУЯСЫ)
   phoneInput.addEventListener('input', () => {
     const val = phoneInput.value.trim();
     
-    // Эгер бош болсо стилдерди баштапкы абалга келтирет
     if (val === "") {
       phoneInput.classList.remove('invalid-phone', 'valid-phone');
       phoneError.style.display = 'none';
@@ -119,10 +163,9 @@
       return;
     }
 
-    const isNormal9 = /^[0-9]{9}$/.test(val); // Болгону 9 сан
-    const isKyrgyz13 = /^\+996[0-9]{9}$/.test(val); // +996 жана артынан 9 сан (жалпы 13 орун)
+    const check = validateKyrgyzPhone(val);
 
-    if (isNormal9 || isKyrgyz13) {
+    if (check.isValid) {
       phoneInput.classList.remove('invalid-phone');
       phoneInput.classList.add('valid-phone');
       phoneError.style.display = 'none';
@@ -130,8 +173,9 @@
     } else {
       phoneInput.classList.remove('valid-phone');
       phoneInput.classList.add('invalid-phone');
+      phoneError.innerText = check.msg;
       phoneError.style.display = 'block';
-      submitBtn.disabled = true; // Номер ката болсо кнопка иштебей калат
+      submitBtn.disabled = true; // Кнопканы бөгөттөйт
     }
   });
 
@@ -193,12 +237,11 @@
     const btn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btnText');
 
-    // Базага жөнөтүү алдында номерин дагы бир сыйра текшерип алуу
-    const isNormal9 = /^[0-9]{9}$/.test(adPhone);
-    const isKyrgyz13 = /^\+996[0-9]{9}$/.test(adPhone);
+    // БАЗАГА ЖӨНӨТӨӨРДӨ АКЫРКЫ ТЕКШЕРҮҮ ЖАНА НОМЕРДИ ТАЗАЛОО
+    const finalCheck = validateKyrgyzPhone(adPhone);
 
-    if (!isNormal9 && !isKyrgyz13) {
-      alert("Сураныч, телефон номерин туура форматта жазыңыз!");
+    if (!finalCheck.isValid) {
+      alert(finalCheck.msg);
       phoneInput.focus();
       return;
     }
@@ -224,7 +267,7 @@
         category: adCat,
         price: adPrice,
         currency: adValuta,
-        phone: adPhone,
+        phone: finalCheck.formatted, // Базага тазаланган, реалдуу форматтагы уюлдук номер сакталат (+996700123456)
         image: uploadedUrls[0], 
         images: uploadedUrls,    
         createdAt: serverTimestamp(),
