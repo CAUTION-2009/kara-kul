@@ -262,9 +262,9 @@
     <div id="feedbacks-container"></div>
   </div>
 
-  <script type="module">
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, addDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCE6B0d8QJlHmo7cCDunwR20aC4eM6NvEA",
@@ -276,7 +276,7 @@
       measurementId: "G-N6NSJ5Q0J9"
     };
 
-    const ADMIN_PASSWORD = "snr_muu"; 
+    const ADMIN_PASSWORD = "muu"; 
 
     const categoryTranslations = {
       "phone": "Телефондор", "tools": "Аспаптар", "auto": "Автоунаа", "house": "Кыймылсыз мүлк",
@@ -341,10 +341,14 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
+      // АВТОМАТТЫК ӨЧҮРҮҮ ФУНКЦИЯСЫН ИШКЕ КИРГИЗҮҮ
+      autoDeleteOldAds(db);
+
       tabPending.onclick = () => {
         if (currentTab === "pending") return;
         currentTab = "pending";
         updateTabStyles();
+        autoDeleteOldAds(db); // Башка өтмөккө өткөндө да текшерип турат
         loadData(db);
       };
 
@@ -352,6 +356,7 @@
         if (currentTab === "active") return;
         currentTab = "active";
         updateTabStyles();
+        autoDeleteOldAds(db);
         loadData(db);
       };
 
@@ -363,6 +368,38 @@
       };
 
       loadData(db);
+    }
+
+    // МИЛИСЕКУНД МЕНЕН АВТОМАТТЫК ӨЧҮРҮҮ ФУНКЦИЯСЫ
+    async function autoDeleteOldAds(db) {
+      try {
+        // Сиз каалагандай 5 секунд коюлду (5 * 1000 милисекунд)
+        const expirationTime = 7 * 24 * 60 * 60 * 1000; 
+
+
+        // КЕЙИНЧЕК РЕАЛДУУ 7 КҮНГӨ АЛМАШТЫРУУ ҮЧҮН өйдөкү сапты өчүрүп, ушуну ачып койсоңуз болот:
+        // const expirationTime = 7 * 24 * 60 * 60 * 1000; 
+
+        const now = new Date();
+        const adsRef = collection(db, "ads");
+        const snapshot = await getDocs(adsRef);
+        
+        snapshot.forEach(async (docSnap) => {
+          const ad = docSnap.data();
+          if (ad.createdAt) {
+            const createdDate = ad.createdAt.toDate();
+            const diffTime = now - createdDate; // Канча убакыт өткөнү (милисекунд менен)
+
+            // Эгер жарнаманын убактысы 5 секунддан ашып кетсе, БАЗАДАН ӨЧҮРӨБҮЗ
+            if (diffTime > expirationTime) {
+              await deleteDoc(doc(db, "ads", docSnap.id));
+              console.log(`Убактысы бүттү, базадан автоматтык өчүрүлдү: ${docSnap.id}`);
+            }
+          }
+        });
+      } catch (err) {
+        console.error("Автоматтык тазалоодо ката кетти:", err);
+      }
     }
 
     function updateTabStyles() {
@@ -379,7 +416,6 @@
 
       if (unsubscribe) unsubscribe();
 
-      // Эгер пикирлер табы тандалса, "feedbacks" коллекциясын угабыз
       if (currentTab === "feedbacks") {
         adsContainer.style.display = "none";
         feedbacksContainer.style.display = "flex";
@@ -423,7 +459,6 @@
         });
 
       } else {
-        // Кадимки жарнамаларды жүктөө (pending же active)
         adsContainer.style.display = "grid";
         feedbacksContainer.style.display = "none";
 
@@ -480,6 +515,19 @@
             const rawCategory = ad.category || 'none';
             const kyrgyzCategory = categoryTranslations[rawCategory] || rawCategory;
 
+            // Жарнаманын мөнөтүн (7 күн) текшерүү логикасы
+            let statusBadge = "";
+            if (ad.createdAt && currentTab === "active") {
+              const createdDate = ad.createdAt.toDate();
+              const now = new Date();
+              const diffTime = Math.abs(now - createdDate);
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+              
+              if (diffDays > 7) {
+                statusBadge = `<div style="background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-bottom: 8px; display: inline-block;"><i class="fas fa-exclamation-triangle"></i> Мөнөтү бүттү (7 күн өттү)</div>`;
+              }
+            }
+
             const actionButtons = currentTab === "pending" 
               ? `<button class="btn btn-approve" data-id="${adId}"><i class="fas fa-check"></i> Чыгаруу</button>
                  <button class="btn btn-delete" data-id="${adId}"><i class="fas fa-trash"></i> Өчүрүү</button>`
@@ -487,7 +535,8 @@
 
             card.innerHTML = `
               ${sliderHtml}
-              <h3 class="ad-title">${ad.title || 'Сүрөттөмөсү жок'}</h3>
+              <div style="padding: 12px 0 0 0;">${statusBadge}</div>
+              <h3 class="ad-title" style="margin-top:0;">${ad.title || 'Сүрөттөмөсү жок'}</h3>
               <div class="ad-price">${ad.price} ${ad.currency || 'Сом'}</div>
               <div class="ad-meta">
                 <span><i class="fas fa-folder" style="color:#64748b; width:14px;"></i> Бөлүм: <b>${kyrgyzCategory}</b></span>
@@ -510,7 +559,6 @@
       }
     }
 
-    // СЛАЙДЕРДИ СҮРҮҮ ФУНКЦИЯСЫ
     window.moveSlider = function(adId, direction) {
       const slider = document.getElementById(`slider-${adId}`);
       const track = document.getElementById(`track-${adId}`);
@@ -530,7 +578,6 @@
       if (badge) badge.innerText = `${current + 1}/${total}`;
     }
 
-    // ТЕЛЕФОНДО БАРМАК МЕНЕН СҮРҮҮ (TOUCH SWIPE)
     function setupTouchSlider(adId) {
       setTimeout(() => {
         const slider = document.getElementById(`slider-${adId}`);
@@ -556,7 +603,6 @@
       }, 100);
     }
 
-    // ЖАРНАМАЛАРДЫ БАШКАРУУ ОКУЯЛАРЫ
     function setupActionEvents(db) {
       document.querySelectorAll('.btn-approve').forEach(button => {
         button.onclick = async (e) => {
@@ -607,7 +653,6 @@
       });
     }
 
-    // ОЙ-ПИКИРЛЕРДИ ӨЧҮРҮҮ ОКУЯСЫ
     function setupFeedbackDeleteEvents(db) {
       feedbacksContainer.querySelectorAll('.btn-delete').forEach(button => {
         button.onclick = async (e) => {

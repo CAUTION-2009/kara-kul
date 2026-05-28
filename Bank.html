@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Валюта Курстары - Кара-Көл Маркет</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
   <style>
     :root {
       --main-color: #ff4d4d;
@@ -63,7 +63,8 @@
     td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-weight: 600; font-size: 1rem; }
     
     .currency-name { display: flex; align-items: center; gap: 10px; color: #2c3e50; }
-    .currency-name img { width: 24px; height: 16px; border-radius: 2px; object-fit: cover; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .currency-name .fi { width: 24px; height: 18px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+    
     .price-buy { color: #27ae60; text-align: right; }
     .price-sell { color: #ff4d4d; text-align: right; }
     
@@ -74,9 +75,6 @@
     .input-box { display: flex; background: #f0f2f5; border-radius: 10px; padding: 5px 10px; align-items: center; }
     .input-box input { border: none; background: transparent; width: 100%; padding: 10px; font-size: 1.1rem; font-weight: 600; outline: none; }
     .input-box select { border: none; background: transparent; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; padding-right: 5px; }
-
-    /* СТИЛЬ ДЛЯ ГРАФИКА */
-    .chart-box { height: 180px; position: relative; }
 
     /* ТӨМӨНКҮ МЕНЮ */
     .bottom-nav { 
@@ -165,13 +163,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><i class="fas fa-chart-line" style="color: #e67e22;"></i> Доллардын КР боюнча жумалык тренди</div>
-      <div class="chart-box">
-        <canvas id="rateChart"></canvas>
-      </div>
-    </div>
-
   </div>
 
   <div class="bottom-nav">
@@ -188,24 +179,19 @@
     async function fetchLiveCurrency() {
       const tableBody = document.getElementById('rates-table');
       try {
-        // Запрашиваем глобальный API по отношению к доллару США для точной кросс-конвертации КР
         const response = await fetch('https://open.er-api.com/v6/latest/USD');
         const data = await response.json();
         
         if (data.result === "success") {
           const apiRates = data.rates;
           
-          // Базовый жесткий якорь для сома (средний курс доллара в Айыл Банке / КР)
-          // Если доллар в КР изменится, формула автоматически скорректирует остальные валюты
           const kgsInUsd = apiRates.KGS || 89.50; 
           const currentUSD = kgsInUsd;
 
-          // Рассчитываем КР-значения валют напрямую без ошибок деления
           const currentEUR = currentUSD / apiRates.EUR;
           const currentRUB = currentUSD / apiRates.RUB;
           const currentKZT = currentUSD / apiRates.KZT;
 
-          // Создаем коммерческий банковский спред Айыл Банка
           globalRates = {
             USD: { 
               buy: (currentUSD * 0.993).toFixed(2), 
@@ -225,25 +211,24 @@
             }
           };
 
-          // Выводим в таблицу строго в сомах (как в Айыл Банке)
           tableBody.innerHTML = `
             <tr>
-              <td><div class="currency-name"><img src="https://flagcdn.com/w40/us.png"> USD (АКШ Доллары)</div></td>
+              <td><div class="currency-name"><span class="fi fi-us"></span> USD (АКШ Доллары)</div></td>
               <td class="price-buy">${globalRates.USD.buy} сом</td>
               <td class="price-sell">${globalRates.USD.sell} сом</td>
             </tr>
             <tr>
-              <td><div class="currency-name"><img src="https://flagcdn.com/w40/eu.png"> EUR (Евро)</div></td>
+              <td><div class="currency-name"><span class="fi fi-eu"></span> EUR (Евро)</div></td>
               <td class="price-buy">${globalRates.EUR.buy} сом</td>
               <td class="price-sell">${globalRates.EUR.sell} сом</td>
             </tr>
             <tr>
-              <td><div class="currency-name"><img src="https://flagcdn.com/w40/ru.png"> RUB (Орусия Рубли)</div></td>
+              <td><div class="currency-name"><span class="fi fi-ru"></span> RUB (Орусия Рубли)</div></td>
               <td class="price-buy">${globalRates.RUB.buy} сом</td>
               <td class="price-sell">${globalRates.RUB.sell} сом</td>
             </tr>
             <tr>
-              <td><div class="currency-name"><img src="https://flagcdn.com/w40/kz.png"> KZT (Казак Теңгеси)</div></td>
+              <td><div class="currency-name"><span class="fi fi-kz"></span> KZT (Казак Теңгеси)</div></td>
               <td class="price-buy">${globalRates.KZT.buy} сом</td>
               <td class="price-sell">${globalRates.KZT.sell} сом</td>
             </tr>
@@ -253,7 +238,6 @@
           document.getElementById('sync-clock').innerText = `Акыркы жаңылоо: ${now.toLocaleTimeString('ky-KG')} (Айыл Банк убактысы)`;
           
           calculateConversion();
-          buildTrendChart(parseFloat(globalRates.USD.sell));
         }
       } catch (error) {
         console.error("Ката:", error);
@@ -261,7 +245,6 @@
       }
     }
 
-    // ИСПРАВЛЕННЫЙ КОНВЕРТЕР (Учитывает реальную продажу банка)
     function calculateConversion() {
       const amount = parseFloat(document.getElementById('inputAmount').value) || 0;
       const selectedCurrency = document.getElementById('fromCurrency').value;
@@ -275,47 +258,6 @@
 
     document.getElementById('inputAmount').addEventListener('input', calculateConversion);
     document.getElementById('fromCurrency').addEventListener('change', calculateConversion);
-
-    // ГРАФИК ТРЕНДА ДЛЯ КЫРГЫЗСТАНА
-    function buildTrendChart(currentUSD) {
-      const ctx = document.getElementById('rateChart').getContext('2d');
-      const daysLabels = ['Шей', 'Шар', 'Бей', 'Жум', 'Ише', 'Жек', 'Бүгүн'];
-      const historicalData = [
-        (currentUSD - 0.25).toFixed(2),
-        (currentUSD - 0.10).toFixed(2),
-        (currentUSD + 0.15).toFixed(2),
-        (currentUSD - 0.05).toFixed(2),
-        (currentUSD + 0.20).toFixed(2),
-        (currentUSD + 0.02).toFixed(2),
-        currentUSD.toFixed(2)
-      ];
-
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: daysLabels,
-          datasets: [{
-            label: 'USD / KGS',
-            data: historicalData,
-            borderColor: '#ff4d4d',
-            backgroundColor: 'rgba(255, 77, 77, 0.08)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#ff4d4d'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false } },
-            y: { ticks: { font: { size: 10 } } }
-          }
-        }
-      });
-    }
 
     window.onload = fetchLiveCurrency;
   </script>

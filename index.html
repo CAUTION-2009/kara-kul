@@ -637,8 +637,8 @@
             };
 
             adCard.innerHTML = `
-                <div style="position: relative; overflow: hidden; height: 110px; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
-                    <img id="img-${adId}" src="${allImages[0]}" style="width: 100%; height: 100%; object-fit: contain;">
+                <div style="position: relative; overflow: hidden; height: 300px; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                    <img id="img-${adId}" src="${allImages[0]}" style="width: 100%; height: 200%; object-fit: contain;">
                     ${allImages.length > 1 ? `
                         <div id="badge-${adId}" onclick="nextImg('${adId}', ${JSON.stringify(allImages).replace(/"/g, '&quot;')}, event)" 
                              style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; z-index: 10; user-select: none;">
