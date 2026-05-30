@@ -263,6 +263,14 @@
   </div>
 
 <script type="module">
+  // Оң жакты бөгөттөө
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Көчүрүүнү бөгөттөө (Ctrl+C же контексттик көчүрүү)
+  document.addEventListener('copy', e => e.preventDefault());
+  
+
+  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, addDoc, deleteDoc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -276,7 +284,7 @@
       measurementId: "G-N6NSJ5Q0J9"
     };
 
-    const ADMIN_PASSWORD = "muu"; 
+    const ADMIN_PASSWORD = "artaaan"; 
 
     const categoryTranslations = {
       "phone": "Телефондор", "tools": "Аспаптар", "auto": "Автоунаа", "house": "Кыймылсыз мүлк",

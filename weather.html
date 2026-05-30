@@ -116,6 +116,15 @@
   </div>
 
   <script>
+    // Оң жакты бөгөттөө
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Көчүрүүнү бөгөттөө (Ctrl+C же контексттик көчүрүү)
+  document.addEventListener('copy', e => e.preventDefault());
+
+
+
+  
     const LAT = 41.6333;
     const LON = 72.6667;
 

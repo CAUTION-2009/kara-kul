@@ -352,6 +352,15 @@
   </div>
 
 <script type="module">
+    // Оң жакты бөгөттөө
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Көчүрүүнү бөгөттөө (Ctrl+C же контексттик көчүрүү)
+  document.addEventListener('copy', e => e.preventDefault());
+
+
+
+  
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, getDoc, doc as fsDoc, query, orderBy, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 

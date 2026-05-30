@@ -189,6 +189,13 @@
   </div>
 
   <script>
+    // Оң жакты бөгөттөө
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Көчүрүүнү бөгөттөө (Ctrl+C же контексттик көчүрүү)
+  document.addEventListener('copy', e => e.preventDefault());
+
+  
     function toggleMenu() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
