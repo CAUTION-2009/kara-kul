@@ -1,0 +1,566 @@
+/* ==========================================================================
+   1. ГЛОБАЛДЫК СТИЛДЕР ЖАНА ӨЗГӨРМӨЛӨР (Variables & Reset)
+   ========================================================================== */
+:root {
+  --main-color: #ff4d4d;
+  --bg-color: #f4f4f4;
+  --bank-bg-color: #f4f6f9;
+  --card-bg: #ffffff;
+  --text-color: #2c3e50;
+}
+
+body { 
+  margin: 0; 
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+  background: var(--bg-color); 
+  padding-bottom: 90px; 
+  overflow-x: hidden; 
+}
+
+/* Навигациялык Жогорку Шапка (Header) */
+ .header { background: #ff4d4d; padding: 15px; position: sticky; top: 0; z-index: 1000; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .header-top h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+    .header-icons { display: flex; gap: 15px; align-items: center; }
+
+/* Контейнерлер жана Карточкалар */
+.container { 
+  padding: 15px; 
+  max-width: 1400px; 
+  margin: auto; 
+}
+.form-card { 
+  background: white; 
+  padding: 20px; 
+  border-radius: 15px; 
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+  margin-top: 10px;
+}
+.card {
+  background: white;
+  border-radius: 14px;
+  text-align: center;
+  padding: 18px 5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f0f0f0;
+}
+/* ==========================================================================
+   2. ТӨМӨНКҮ МЕНЮ (Bottom Navigation) - Баардык баракчалар үчүн бирдей
+   ========================================================================== */
+.bottom-nav { 
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
+  background: white; 
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center; 
+  padding: 10px 0; 
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.06); 
+  z-index: 1000; 
+}
+.nav-link { 
+  text-align: center; 
+  color: #7f8c8d; 
+  text-decoration: none; 
+  font-size: 10px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 4px; 
+  font-weight: 500; 
+}
+.nav-link i { 
+  font-size: 20px; 
+  display: block; 
+  margin-bottom: 3px; 
+}
+.nav-link.active { 
+  color: var(--main-color); 
+}
+.center-add { 
+  background: var(--main-color); 
+  color: white !important; 
+  width: 52px; 
+  height: 52px; 
+  border-radius: 50%; 
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  transform: translateY(-15px); 
+  border: 4px solid white; 
+  box-shadow: 0 4px 10px rgba(255, 77, 77, 0.4); 
+}
+.center-add i { 
+  font-size: 1.5rem !important; 
+}
+
+/* ==========================================================================
+   3. КАПТАЛ МЕНЮ ЖАНА ОВЕРЛЕЙ (Sidebar & Overlays)
+   ========================================================================== */
+.sidebar { 
+  position: fixed; 
+  top: 0; 
+  left: -280px; 
+  width: 260px; 
+  height: 100%; 
+  background: white; 
+  box-shadow: 2px 0 10px rgba(0,0,0,0.2); 
+  z-index: 2000; 
+  transition: 0.3s; 
+  padding: 20px; 
+  box-sizing: border-box; 
+}
+.sidebar.active { left: 0; }
+.sidebar-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 30px; 
+  border-bottom: 1px solid #eee; 
+  padding-bottom: 10px; 
+}
+.sidebar-header h2 { color: var(--main-color); margin: 0; }
+.sidebar-links a { 
+  display: flex; 
+  align-items: center; 
+  padding: 12px 10px; 
+  text-decoration: none; 
+  color: #333; 
+  border-radius: 8px; 
+  font-weight: 500; 
+  font-size: 16px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.sidebar-links a i { 
+  margin-right: 15px; 
+  color: var(--main-color); 
+  width: 20px; 
+  font-size: 16px; 
+}
+
+.overlay { 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.5); 
+  display: none; 
+  z-index: 1500; 
+}
+.overlay.active { display: block; }
+.ad-overlay { 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.6); 
+  z-index: 3000; 
+  display: none; 
+}
+
+/* ==========================================================================
+   4. БАШКЫ БЕТ (Dastan.css - Жарнамалар жана Издөө)
+   ========================================================================== */
+.admin-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(5px);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.admin-btn:hover { background: white; color: var(--main-color); }
+
+.search-box { position: relative; width: 100%; box-sizing: border-box; }
+.search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; font-size: 16px; }
+.search-box input { width: 100%; padding: 11px 15px 11px 42px; border-radius: 25px; border: none; outline: none; box-sizing: border-box; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+/* Мобилдик Калкып чыгуучу Терезе */
+.ad-modal-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 450px;
+    height: 85vh;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 3500;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: popupShow 0.3s ease-out;
+}
+@keyframes popupShow {
+    from { transform: translate(-50%, -40%); opacity: 0; }
+    to { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+/* Бөлүшүү терезеси (Share Modal) */
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 5000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.share-modal {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: modalScale 0.2s ease-out;
+}
+@keyframes modalScale {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.share-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; }
+.share-modal-header h3 { margin: 0; font-size: 16px; color: #333; font-weight: 600; }
+.share-modal-header i { cursor: pointer; color: #888; font-size: 18px; transition: color 0.2s; }
+.share-modal-header i:hover { color: var(--main-color); }
+.share-modal-body { padding: 25px 20px; }
+.share-input-wrap { background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; padding: 12px 15px; font-size: 14px; color: #444; word-break: break-all; margin-bottom: 20px; user-select: all; }
+.share-modal-footer { display: flex; justify-content: flex-end; padding: 0 20px 20px; }
+.share-copy-btn { background: #6c757d; color: white; border: none; padding: 10px 22px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.share-copy-btn:hover { background: #5a6268; }
+
+/* Калкып чыгуучу билдирүү (Toast) */
+.custom-toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 13px;
+    z-index: 6000;
+    display: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    white-space: nowrap;
+    font-weight: 500;
+}
+.custom-toast.show { display: block; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Категориялардын сызыгы */
+.section-title { padding: 15px 15px 5px; font-weight: bold; font-size: 0.95rem; color: #555; }
+.categories-container { display: flex; gap: 12px; overflow-x: auto; padding: 10px 15px; scrollbar-width: none; }
+.categories-container::-webkit-scrollbar { display: none; }
+.cat-item { min-width: 80px; background: white; border-radius: 15px; padding: 12px 5px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; display: flex; flex-direction: column; align-items: center; border: none; cursor: pointer; }
+.cat-item img, .cat-item .cat-icon-wrap { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 8px; }
+.cat-item .cat-icon-wrap { display: flex; align-items: center; justify-content: center; background: #fdf2f2; color: var(--main-color); font-size: 18px; transition: all 0.2s ease; }
+.cat-item.active .cat-icon-wrap { background: var(--main-color); color: white; }
+
+/* Жарнамалар Сеткасы (Грид) */
+.ads-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 8px; background: #f8f9fa; }
+.ad-card { background: white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; }
+.ad-card img { width: 100%; height: 120px; object-fit: cover; }
+.ad-info { padding: 8px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+.ad-price { color: var(--main-color); font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+.ad-info h4 { margin: 0; font-size: 12px; color: #333; font-weight: 400; line-height: 1.3; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ad-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; font-size: 9px; color: #999; }
+.share-btn { background: none; border: none; color: #888; cursor: pointer; padding: 6px; font-size: 14px; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+.share-btn:hover { color: var(--main-color); }
+
+/* ==========================================================================
+   5. КАТЕГОРИЯЛАР СЕТКАСЫ (Categories.css)
+   ========================================================================== */
+.categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 15px; }
+.card:active { transform: scale(0.95); background: #fff5f5; border-color: var(--main-color); }
+.cat-icon-box { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; background: #fdf2f2; color: var(--main-color); transition: 0.2s; }
+.card:hover .cat-icon-box { background: var(--main-color); color: white; }
+.card p { font-size: 11px; margin: 0; color: #444; font-weight: 600; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ==========================================================================
+   6. ПИКИРЛЕР ЖАНА ЖАРНАМА КОШУУ (Feedback.css & Jardama.css)
+   ========================================================================== */
+h3 { margin-top: 0; color: #333; }
+p { color: #666; font-size: 0.95rem; line-height: 1.4; }
+
+.warning-box { background: #fff5f5; border-left: 4px solid var(--main-color); padding: 12px; border-radius: 4px; margin: 15px 0; color: #d93838; font-size: 0.88rem; font-weight: 500; display: flex; align-items: flex-start; gap: 10px; }
+.warning-box i { font-size: 1.1rem; margin-top: 2px; }
+
+label { font-weight: 600; color: #444; font-size: 0.9rem; display: block; margin-top: 15px; }
+input[type="email"], input[type="tel"], select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+input[type="email"]:focus, textarea:focus { border-color: var(--main-color); box-shadow: 0 0 5px rgba(255, 77, 77, 0.1); }
+
+/* Валидация стилдери */
+input[type="email"].invalid-input, input[type="tel"].invalid-phone { border: 2px solid #e74c3c; background-color: #fdf2f2; }
+input[type="email"].valid-input, input[type="tel"].valid-phone { border: 2px solid #2ecc71; background-color: #f2fdf5; }
+.error-msg, .phone-error-msg { color: #e74c3c; font-size: 12px; margin-bottom: 12px; display: none; font-weight: 500; }
+textarea { height: 120px; resize: none; margin-bottom: 12px; }
+.row { display: flex; gap: 10px; }
+
+/* Баскычтар */
+.btn-send, .submit-btn { background: var(--main-color); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(255, 77, 77, 0.2); margin-top: 10px; transition: 0.2s; }
+.submit-btn { border-radius: 30px; margin-top: 20px; box-shadow: 0 4px 10px rgba(230,0,0,0.2); }
+.btn-send:disabled, .submit-btn:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+
+/* Сүрөт жүктөөчү сетка */
+.upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+.upload-box { background: #fafafa; border: 2px dashed #ccc; border-radius: 10px; height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; }
+.upload-box span { font-size: 9px; color: #888; margin-top: 5px; text-align: center; }
+.upload-box img { width: 100%; height: 100%; object-fit: contain; position: absolute; top:0; left:0; display:none; }
+
+/* ==========================================================================
+   7. ВАЛЮТА КОНВЕРТЕР ЖАНА БАНК (Bank.css)
+   ========================================================================== */
+.card-title { font-size: 1.1rem; font-weight: 700; margin-top: 0; margin-bottom: 15px; color: #333; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f4f4f4; padding-bottom: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: #7f8c8d; font-size: 0.85rem; padding-bottom: 10px; }
+td { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-weight: 600; font-size: 1rem; }
+.currency-name { display: flex; align-items: center; gap: 10px; color: #2c3e50; }
+.currency-name .fi { width: 24px; height: 18px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.price-buy { color: #27ae60; text-align: right; }
+.price-sell { color: var(--main-color); text-align: right; }
+.update-time { font-size: 0.8rem; color: #95a5a6; text-align: center; margin-top: 15px; }
+
+.converter-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.input-box { display: flex; background: #f0f2f5; border-radius: 10px; padding: 5px 10px; align-items: center; }
+.input-box input { border: none; background: transparent; width: 100%; padding: 10px; font-size: 1.1rem; font-weight: 600; outline: none; }
+.input-box select { border: none; background: transparent; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; padding-right: 5px; }
+
+/* ==========================================================================
+   8. АБА ЫРАЙЫ (Weather.css)
+   ========================================================================== */
+.maintenance-notice { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; margin: 15px; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.maintenance-notice i { font-size: 1.5rem; color: #e67e22; animation: wrench-wiggle 2s infinite ease-in-out; }
+.maintenance-text { font-size: 0.9rem; line-height: 1.4; margin: 0; }
+.maintenance-text strong { display: block; margin-bottom: 2px; color: #d35400; }
+
+@keyframes wrench-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(-15deg); }
+  30% { transform: rotate(15deg); }
+  45% { transform: rotate(-10deg); }
+  60% { transform: rotate(10deg); }
+}
+
+.weather-card { background: white; margin: 15px; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; }
+.city-name { font-size: 1.4rem; font-weight: bold; color: #333; margin: 0; }
+.temp-big { font-size: 3.5rem; font-weight: 700; color: var(--main-color); margin: 10px 0; }
+.weather-desc { font-size: 1rem; color: #7f8c8d; margin-bottom: 15px; text-transform: capitalize; }
+.weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
+.w-det-box { background: #fafafa; padding: 10px; border-radius: 8px; font-size: 0.9rem; color: #555; }
+.w-det-box i { color: var(--main-color); margin-bottom: 5px; font-size: 1.1rem; }
+.chart-container { background: white; margin: 15px; padding: 15px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); height: 200px; }
+
+/* ==========================================================================
+   9. АДМИН ПАНЕЛЬ (Admin.css)
+   ========================================================================== */
+.login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f4f4; z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+.login-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 360px; text-align: center; }
+.login-box h2 { margin-top: 0; color: #333; font-size: 1.4rem; margin-bottom: 20px; }
+
+.password-wrapper { position: relative; margin-bottom: 15px; width: 100%; }
+.password-wrapper input { width: 100%; padding: 12px 45px 12px 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; }
+.password-wrapper input:focus { border-color: var(--main-color); }
+.password-wrapper input.error { border-color: #e74c3c; background-color: #fdf2f2; }
+.toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; font-size: 18px; }
+.login-box button { width: 100%; padding: 12px; background: var(--main-color); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+.counter { background: white; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
+.btn-logout { background: white; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; color: #64748b; font-size: 13px; font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+.btn-logout:hover { background: #f1f5f9; color: #334155; }
+
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+.tab-btn { flex: 1; padding: 12px; border: none; background: #cbd5e1; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; color: #333; text-align: center; }
+.tab-btn.active { background: var(--main-color); color: white; }
+
+/* Админдеги жарнама контейнери */
+#ads-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+#feedbacks-container { display: none; flex-direction: column; gap: 12px; max-width: 800px; margin: auto; }
+
+/* Пикир карточкалары */
+.feedback-card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; }
+.feedback-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; }
+.feedback-email { font-weight: bold; color: #2563eb; font-size: 0.95rem; }
+.feedback-time { font-size: 0.8rem; color: #64748b; }
+.feedback-message { font-size: 1rem; color: #1e293b; line-height: 1.5; white-space: pre-wrap; word-break: break-word; margin: 4px 0; }
+
+/* Слайдер стили */
+.slider-container { position: relative; width: 100%; height: 200px; background: #f1f5f9; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+.slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
+.slider-slide { min-width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+.slider-slide img { width: 100%; height: 100%; object-fit: contain; }
+.slider-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.65); color: white; padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: bold; z-index: 10; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.4); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 10; transition: 0.2s; }
+.slider-btn:hover { background: rgba(0, 0, 0, 0.7); }
+.slider-btn.prev { left: 8px; }
+.slider-btn.next { right: 8px; }
+
+.ad-title { font-size: 1rem; font-weight: bold; margin: 0 0 6px 0; color: #1e293b; word-break: break-word; height: 38px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ad-meta-admin { font-size: 0.85rem; color: #475569; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 6px; }
+.ad-meta-admin a { color: #2563eb; text-decoration: none; font-weight: bold; }
+
+/* Админ баскычтар */
+.actions { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+.btn { width: 100%; padding: 9px; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: white; transition: opacity 0.2s; box-sizing: border-box; }
+.btn:hover { opacity: 0.9; }
+.btn-approve { background: #2ecc71; }
+.btn-delete { background: #e74c3c; }
+
+.empty-msg { text-align: center; color: #64748b; margin-top: 50px; font-size: 1.1rem; width: 100%; grid-column: 1/-1; }
+.loading { text-align: center; color: var(--main-color); font-weight: bold; margin-top: 30px; font-size: 1.1rem; }
+
+/* ==========================================================================
+   10. МОБИЛДИК ТҮЗҮМДӨРГӨ ЫҢГАЙЛАШТЫРУУ (Media Queries)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  #ads-container { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 8px; }
+  
+  /* Жарнамалар сеткасы мобилдикте */
+  .ads-container, #ads-container { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 8px; 
+  }
+  
+  /* Мобилдик жарнама терезеси */
+  .ad-modal-window { 
+    top: auto; 
+    bottom: 0; 
+    left: 0; 
+    transform: none; 
+    width: 100%; 
+    height: 85vh; 
+    border-radius: 20px 20px 0 0; 
+    animation: mobileSheetUp 0.3s ease-out; 
+  }
+  @keyframes mobileSheetUp { 
+    from { transform: translateY(100%); } 
+    to { transform: translateY(0); } 
+  }
+  
+  /* Админ панель мобилдикте */
+  .tabs { gap: 5px; margin-bottom: 15px; }
+  .tab-btn { padding: 10px 5px; font-size: 12px; }
+  .ad-card { padding: 8px; border-radius: 8px; }
+  .slider-container { height: 130px; margin-bottom: 6px; }
+  .ad-title { font-size: 0.85rem; height: 32px; -webkit-line-clamp: 2; margin-bottom: 4px; }
+  .ad-price { font-size: 0.95rem; margin: 2px 0 6px 0; }
+  .ad-meta { font-size: 0.75rem; padding: 6px; gap: 4px; margin-bottom: 8px; border-radius: 4px; }
+  .btn { padding: 8px 4px; font-size: 11px; border-radius: 4px; gap: 4px; }
+  .slider-btn { width: 22px; height: 22px; font-size: 10px; }
+  .slider-badge { font-size: 10px; padding: 2px 6px; bottom: 5px; right: 5px; }
+}
+
+/* ==========================================================================
+   11. GOOGLE SIGN-IN СТИЛДЕРИ (jardama.html)
+   ========================================================================== */
+.google-signin-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3c4043;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  font-family: inherit;
+}
+
+.google-signin-btn:hover {
+  background: #f8f9fa;
+  border-color: #d2e3fc;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.google-signin-btn:active {
+  background: #f1f3f4;
+}
+
+.google-signin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Колдонуучу маалыматынын карточкасы */
+#userInfo {
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+  border: 1px solid #b0d4f1;
+  border-radius: 12px;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+#userInfo img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Каттоо ката билдирүүсү */
+#authError {
+  color: #e74c3c;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  display: none;
+  padding: 8px;
+  background: #fdf2f2;
+  border-radius: 6px;
+}
+
+/* Каттоо оверлейинин өзгөчөлүктөрү */
+#authOverlay .login-box {
+  max-width: 380px;
+  width: 90%;
+}
+
+#authOverlay .login-box h2 {
+  margin-bottom: 8px;
+}
+
+#authOverlay .login-box p {
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
